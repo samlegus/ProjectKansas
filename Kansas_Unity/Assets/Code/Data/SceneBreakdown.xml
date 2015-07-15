@@ -1,0 +1,135 @@
+<script>
+  <act number="1">
+    <scene number="1">
+      <moment title="Earth Apocalypse" line="The earth ended" />
+      <moment title="Meme" line="The apocalypse started" />
+      <moment title="Humanity dissolves" line="After the end" />
+      <moment title="Witches tecnhomancing" line="...it soon became clear" />
+      <moment title="Witches gain power" line="These technomancers used their control of system technologies" />
+      <moment title="Blacklights" line="...and look really good under " />
+      <moment title="Hunters are born" line="The survivors of the tech plague" />
+      <moment title="Witches" line="referred to as… witches." />
+      <moment title="Kansas reveal" line="Witch hunters were the elite warriors" />
+      <moment title="Enter the Dojo" line="" />
+      <moment title="Training" line="" />
+      <moment title="Title Shot" line="Say my name..." />
+      <moment title="Intruder Alert" line="Goddamn right." />
+      <moment title="Witches Enter" line="Our fortress is impregnable!" />
+      <moment title="Kansas drops her" line="I’ve come for—" />
+      <moment title="Glenada Exits" line="Oh you two are suuuuper fun" />
+      <moment title="Master dies" line="in the love sea-ACK!" />
+      <moment title="Transported to OZ" line="" />
+      <moment title="Sleep Dart" line="Da'fuck?" />
+    </scene>
+    <scene number="2">
+      <moment title="Glenada's PSA" line="" />
+      <moment title="Glenada's Lair" line="VO repeats" />
+      <moment title="Crystal ball Elfesto" line="Here is Elfesto" />
+      <moment title="Exposition" line="" />
+      <moment title="Story of OZ" line="" />
+      <moment title="Transport to Armory" line="...for doing your dirty work?" />
+      <moment title="Kansas Armor-Up Montage" line="" />
+      <moment title="Intro TOTO" line="" />
+      <moment title="Transport to Tunnels" line="" />
+    </scene>
+    <scene number="3">
+      <moment title="The Tunnels" line="" />
+      <moment title="Glenada Departs" line="Ta Ta!" />
+      <moment title="TOTO interaction" line="Kay, so, what are we talking here..." />
+      <moment title="Travel by Map" line="Just follow the red blinking dot" />
+      <moment title="Comes to Strong Man" line="Bark! " />
+      <moment title="Kansas fires LTB" line="I don't have time to count to three" />
+      <moment title="TOTO scans SM" line="Bark. You have found a construction bot" />
+      <moment title="Strong Man engage!" line="They mught have done a number on you" />
+      <moment title="Follow" line="Follow" />
+    </scene>
+    <scene number="4">
+      <moment title="TOTO Scans the Junkyard" line="" />
+      <moment title="Tin Ronin Fight" line="" />
+      <moment title="Title Shot" line="Codename: Kansas, Witch Hunter!" />
+      <moment title="Backstory" line="" />
+      <moment title="FLASHBACK Tin Ronin" line="" />
+      <moment title="TR joins the Team" line="Right, ass-kickin is the game" />
+      <moment title="SM Inserts RAM" line="Intersing RAM" />
+    </scene>
+    <scene number="5">
+      <moment title="Leo's Lab" line="Shit! No you don't..." />
+      <moment title="Through the forest" line="These woods are well knows for being cursed" />
+      <moment title="Sly pounces" line="Meow!" />
+      <moment title="Flying Monks on Radar" line="Shit! What was that?" />
+      <moment title="Flying Monk Fight!" line="Nice knowing ya, not!" />
+      <moment title="Sly pounces FTW" line="Meow!" />
+      <moment title="Leo lets them in" line="I'm in this now!" />
+    </scene>
+    <scene number="6">
+      <moment title="Leo's Lab" line="So you're all going to die" />
+      <moment title="Explains the map" line="She's got traps here, merms in the water" />
+      <moment title="Discuss the plan" line="" />
+      <moment title="Cart Mode" line="Lurch hate cart mode" />
+      <moment title="Tavern scene" line="So Leo's contact was all kinds of skeezy" />
+      <moment title="Drugged" line="You feeling this shit yet?" />
+    </scene>
+  </act>
+  <act number="2">
+    <scene number="1">
+      <moment title="FLASHBACK Master and OZ" line="X" />
+      <moment title="Wake up at Elfesto's" line="Wake up maggot!!" />
+      <moment title="Team Kansas Attack!" line="Strong Man, now!!!!" />
+      <moment title="Where's OZ?" line="Betcha feel real smart now fucko..." />
+      <moment title="FLASHBACK to Witches" line="You worthless moronic bag..." />
+      <moment title="Witch Fight!" line="Bitch, I don't have to forgive shit. Die!" />
+      <moment title="OZ's Explanation" line="For centuries now..." />
+      <moment title="Kansas punches through something" line="She killed my master to get to the Source Code." />
+      <moment title="OZ gets a visual display" line="I am the AI imprint of the original OZ" />
+      <moment title="Leo interjects" line="This is bullshit!" />
+    </scene>
+    <scene number="2">
+      <moment title="Intimate Kansas and Tin Ronin" line="Hey rusty, how you holding up?" />
+      <moment title="Elfesto and OZ debate" line="You know she's never going to let me..." />
+      <moment title="Kansas and Ronin get close" line="Look, you're hanging with me now" />
+      <moment title="Elfesto and OZ debate" line="Is there something you're not telling me" />
+      <moment title="Getting steamy" line="Look, there's a good chance" />
+      <moment title="Sex Scene" line="Shhh. That's what she said" />
+      <moment title="Out of sex scene" line="Guess you're not in Kansas any more" />
+    </scene>
+    <scene number="3">
+      <moment title="Armor Up and Plan Scene" line="Okay boys and girls" />
+      <moment title="Armor Up Montage" line="X" />
+      <moment title="Planning Dialogue, Leo joins" line="We will need to shut down her " />
+      <moment title="Tin Ronin discharges" line="Let's do this shit, with guns! YAY!" />
+    </scene>
+    <scene number="4">
+      <moment title="Elfesto with OZ" line="It's quiet, too quiet" />
+      <moment title="Leo hacks, East enters" line="Listen, I just got my nails done" />
+      <moment title="Ronin &amp; East FIGHT!" line="Man your station. Oh Gods...." />
+      <moment title="Kansas, Strong Man, Glenada" line="Oh you're back goody!" />
+      <moment title="Leo hacking, Ronin fighting" line="Uploading trojan centipede" />
+      <moment title="Elfesto faces South" line="Why hasn't that crazy cat nerd" />
+      <moment title="Elfesto &amp; South FIGHT!" line="I thought I killed you" />
+      <moment title="Kansas, SM, Glenada FIGHT!" line="---" />
+      <moment title="Leo is finally successful!" line="Okay I've kicked munchie neural net " />
+      <moment title="Elfesto kills South" line="I Perish!" />
+      <moment title="Elfesto plugs OZ in" line="Now, to get OZ connected to the Emerald OS" />
+      <moment title="Munchies collapse!" line="Hell yeah, we did it!" />
+      <moment title="Something is wrong..." line="Something is not right." />
+      <moment title="Glenada's trap!!" line="My dear, you really came through " />
+      <moment title="Ronin drags Leo" line="Leo we must join the others" />
+      <moment title="Leo needs to hack OZ" line="That snatch tricked us" />
+      <moment title="Glenada reveals plot" line="Ahaha, I've got you now" />
+      <moment title="Kansas joins the fight" line="Keep doing whatever she's trying to stop" />
+      <moment title="FIGHT!!!" line="---" />
+      <moment title="Glenada wins battle" line="Oh my precious little child" />
+      <moment title="Glenada kills Strong Man" line="...I don't have the rest planned out" />
+      <moment title="Kansas squares off Glenada" line="That's what she said!" />
+      <moment title="Unplug it!" line="Alright goddamnit!" />
+      <moment title="Plug it back in" line="That's it! It's working!" />
+      <moment title="Achievement Unlocked!" line="He's talking about this...." />
+    </scene>
+    <scene number="6">
+      <moment title="It's all over, everone's safe" line="Hey, anybody have a clue as to what" />
+      <moment title="No such thing as a good witch" line="There's no such thing as a good Witch." />
+      <moment title="See ya later buddies" line="X" />
+      <moment title="Transport away from OZ" line="X" />
+    </scene>
+  </act>
+</script>
