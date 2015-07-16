@@ -168,7 +168,14 @@ public class DataManager
         int previousSceneMoments = mDataDoc.SelectNodes("script/act[@number = '" + act + "']/scene[@number < '" + scene + "']/moment").Count;
         return previousActsMoments + previousSceneMoments + momentIndex;
     }
-
-
-
+    
+    public int GetRelativeIndex(int act, int scene, int momentIndex)
+    {
+		//get all previous moments from previous acts if any
+		int previousActsMoments = mDataDoc.SelectNodes("script/act[@number < '" + act + "']/scene/moment").Count;
+		//get all previous moments from scenes before given in given act
+		int previousSceneMoments = mDataDoc.SelectNodes("script/act[@number = '" + act + "']/scene[@number < '" + scene + "']/moment").Count;
+		return momentIndex - previousSceneMoments - previousActsMoments;
+    }
+    
 }

@@ -103,7 +103,7 @@ public class Director : MonoBehaviour
 	
 	#endregion
 	   
-	#region Functions
+	#region GUI Manipulation Functions
 	
 	/// <summary>
 	/// Adds a new transition to the ButtonTransition list, new transitions override old ones.
@@ -140,16 +140,23 @@ public class Director : MonoBehaviour
 	{
 		if(allowInput)
 		{
-			float vAxis = Input.GetAxisRaw ("Vertical");
-			bool vPressed = Input.GetButtonDown ("Vertical");
+			float vAxis = Input.GetAxisRaw ("Vertical");		//-1 , 0, or 1 depending on Input (Neg, None, or Pos)
+			bool vPressed = Input.GetButtonDown ("Vertical");	//True if button was pressed, false on release, hold, or no input
 			bool submitPressed = Input.GetButtonDown ("Submit");
 			
-			if(vPressed && vAxis > 0 && directorData.currentMomentID < momentButtons.Count)
-				ShiftButtonsUp ();
-			if(vPressed && vAxis < 0 && directorData.currentMomentID > 0)
-				ShiftButtonsDown ();
+			if(directorMode == DirectorMode.MOMENT)
+			{
+				if(vPressed && vAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1)
+					ShiftButtonsUp ();
+				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0)
+					ShiftButtonsDown ();
+			}
+			
 			if(submitPressed && currentMomentTimer == null)
+			{
 				StartCoroutine (PlayCurrentMoment ());
+			}
+				
 		}
 	}
 	
@@ -164,49 +171,86 @@ public class Director : MonoBehaviour
         //ClearButtonPanel();
         directorData.currentMomentID = dataManager.GetCombinedIndex(act, scene, 0);
 
+		/*
         for (int i = 0; i < momentButtons.Count; i++)
         {
             MomentPosition pos = MomentPosition.ABOVE;
+            Vector2 size = momentPositions[(int)MomentPosition.TOP].rect.size;
+            
             //set above position
             if (i < directorData.currentMomentID - 2)
             {
-
+				pos = MomentPosition.ABOVE;
+				size = momentPositions[(int)MomentPosition.ABOVE].rect.size;
             }
             else if (i == directorData.currentMomentID - 2)
             {
                 //set top position
                 pos = MomentPosition.TOP;
+				size = momentPositions[(int)MomentPosition.TOP].rect.size;
             }
             else if (i == directorData.currentMomentID - 1)
             {
                 //set prev
                 pos = MomentPosition.PREVIOUS;
+				size = momentPositions[(int)MomentPosition.PREVIOUS].rect.size;
             }
             else if (i == directorData.currentMomentID)
             {
                 //set active
                 pos = MomentPosition.ACTIVE;
+				size = momentPositions[(int)MomentPosition.ACTIVE].rect.size;
             }
             else if (i == directorData.currentMomentID + 1)
             {
                 //set next
                 pos = MomentPosition.NEXT;
+				size = momentPositions[(int)MomentPosition.NEXT].rect.size;
             }
             else if (i == directorData.currentMomentID + 2)
             {
                 //set bottom
                 pos = MomentPosition.BOTTOM;
+				size = momentPositions[(int)MomentPosition.BOTTOM].rect.size;
             }
             else
             {
                 //set below
                 pos = MomentPosition.BELOW;
+				size = momentPositions[(int)MomentPosition.BELOW].rect.size;
             }
+      }
+            */
 
-            momentButtons[i].transform.position = momentPositions[(int)pos].transform.position;
-            momentButtons[i].GetComponent<RectTransform>().sizeDelta = momentPositions[(int)pos].rect.size;
+	
+		for(int i = 0; i < momentButtons.Count; ++i)
+		{
+			if(i < directorData.currentMomentID)
+				momentButtons[i].transform.position = momentPositions[(int)MomentPosition.ABOVE].transform.position;
+			else
+				momentButtons[i].transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
+				
+			momentButtons[i].gameObject.SetActive (false);
+		}
+		
+		int posIndex = 0;
+		for(int i = directorData.currentMomentID - 2; i <= directorData.currentMomentID + 3; ++i)
+		{
+			posIndex++;
+			if(i >= 0 && i < momentButtons.Count)
+			{	
+				momentButtons[i].gameObject.SetActive(true);
+				momentButtons[i].transform.position = momentPositions[posIndex].transform.position;
+				momentButtons[i].GetComponent<RectTransform>().sizeDelta = momentPositions[posIndex].GetComponent<RectTransform>().rect.size;
+			}
+				
+		}
+			
 
-        }
+            //momentButtons[i].transform.position = momentPositions[(int)pos].transform.position;
+           // momentButtons[i].GetComponent<RectTransform>().sizeDelta = size;
+
+      
 
         //update nextScene
         directorData.nextSceneMomentID = GetNextSceneMomentId();
@@ -254,115 +298,7 @@ public class Director : MonoBehaviour
         }
     }
     
-    private void HandleMomentButtonClick()
-    {
-    	if(allowInput)
-    	{
-			//ShiftButtonsUp();
-			//ShiftButtonsDown();
-			
-			if(directorData.currentMomentID == directorData.nextSceneMomentID)
-			{
-				if (IsNextScene())
-				{
-					directorData.currentScene++;
-					//This is really ghetto, works for now. Assumes PERFECT naming syntax project side.
-					StartCoroutine(ExecuteSceneTransition("Act" + directorData.currentAct + "Scene" + directorData.currentScene, 1f));
-				}
-				else if (IsNextAct())
-				{
-					directorData.currentAct++;
-					directorData.currentScene = 1;
-				}
-				directorData.nextSceneMomentID = GetNextSceneMomentId();
-				sceneText.text = "Current Scene: " + directorData.currentScene;
-				sceneText.color = Color.white;
-				actText.text = "Current Act: " + directorData.currentAct;
-			}
-    	}
-        
-    }
 
-    public void HandleActContextClick()
-    {
-        //actText.text = "Select Act";
-        //actText.color = Color.yellow;
-
-        //ClearButtonPanel();
-		SetDirectorMode (DirectorMode.ACT);
-        int actsCount = dataManager.Acts.Count;
-        int placeCounter = 0;
-        //loop through the scenes in this act only
-        for (int i = 0; i < actsCount; i++)
-        {
-            //use the scene positions
-            actButtons[i].transform.position = sceneButtonsPosition[placeCounter].transform.position;
-			actButtons[i].GetComponent<RectTransform>().sizeDelta = sceneButtonsPosition[placeCounter].GetComponent<RectTransform>().rect.size;
-            placeCounter++;
-        }
-    }
-
-    public void HandleSceneContextClick()
-    {
-        //sceneText.text = "Select Scene";
-        //sceneText.color = Color.yellow;
-
-        //ClearButtonPanel();
-        SetDirectorMode (DirectorMode.SCENE);
-   
-
-        //start at top position and place the current acts scenes
-        int scenesInThisAct = currentAct.scenes.Count;
-        int indexOffset = 0;
-        if (directorData.currentAct != 1)
-        {
-            //need to offset the list index if second act
-            //hacky would like more general
-            indexOffset = dataManager.GetAct(1).scenes.Count;
-        }
-
-        int placeCounter = 0;
-        //loop through the scenes in this act only
-        for (int i = 0; i < scenesInThisAct; ++i)
-        {
-            sceneButtons[indexOffset + i].transform.position = sceneButtonsPosition[placeCounter].transform.position;
-			sceneButtons[indexOffset + i].GetComponent<RectTransform>().sizeDelta = sceneButtonsPosition[placeCounter].rect.size;
-            placeCounter++;
-        }
-        
-    }
-    
-	public void HandleMomentContextClick()
-	{
-		//SetMomentButtons (directorData.currentAct, directorData.currentScene);
-		SetDirectorMode (DirectorMode.MOMENT);
-	}
-
-    private void HandleActButtonClick(Button clickedButton)
-    {
-        SetAct(GetNumberFromButton(clickedButton));
-    }
-
-    private void HandleSceneButtonClick(Button clickedButton)
-    {
-        SetScene(GetNumberFromButton(clickedButton));
-    }
-
-    private void SetScene(int sceneNumber)
-    {
-        directorData.currentScene = sceneNumber;
-        sceneText.text = "Scene: " + directorData.currentScene;
-        sceneText.color = Color.white;
-        SetMomentButtons(directorData.currentAct, directorData.currentScene);
-    }
-
-    private void SetAct(int actNumber)
-    {
-        directorData.currentAct = actNumber;
-        actText.text = "Act: " + actNumber;
-        actText.color = Color.white;
-        SetScene(1);
-    }
     
     private void ShiftButtonsUp()
     {
@@ -405,14 +341,15 @@ public class Director : MonoBehaviour
         if (directorData.currentMomentID + 3 < momentButtons.Count)
         {
           	//Bottom -> Below
-			AddButtonTransition (momentButtons[directorData.currentMomentID + 3], momentButtons[directorData.currentMomentID + 3].transform.position, momentPositions[(int)MomentPosition.BELOW].transform.position);
+			AddButtonTransition (momentButtons[directorData.currentMomentID + 3], momentButtons[directorData.currentMomentID + 3].transform.position, momentPositions[(int)MomentPosition.BOTTOM].transform.position);
+			momentButtons[directorData.currentMomentID + 3].GetComponent<RectTransform>().sizeDelta = momentPositions[(int)MomentPosition.BOTTOM].rect.size;
         }
         directorData.currentMomentID++;
     }
     
     private void ShiftButtonsDown()
     {
-        if(directorData.currentMomentID == momentButtons.Count)
+        if(directorData.currentMomentID == 0)
         {
             Debug.Log("nothing to shift down.");
             return;
@@ -456,74 +393,27 @@ public class Director : MonoBehaviour
 			AddButtonTransition (momentButtons[directorData.currentMomentID + 2], momentButtons[directorData.currentMomentID + 2].transform.position, momentPositions[(int)MomentPosition.BELOW].transform.position);
 		}
        
-        if(directorData.currentMomentID > 0)
-        	directorData.currentMomentID--;
+       directorData.currentMomentID--;
     }
 
-    /// <summary>
-    /// Returns the index of the first moment in the next scene.
-    /// note:this is used to flag when a scene change takes place for UI purposes
-    /// </summary>
-    /// <returns></returns>
-    private int GetNextSceneMomentId()
-    {
-        int act = directorData.currentAct;
-        int scene = directorData.currentScene;
 
-        if (IsNextScene())
-        {
-            scene++;
-        }
-        else if (IsNextAct())
-        {
-            act++;
-            scene = 1;
-        }
-        return dataManager.GetCombinedIndex(act, scene, 0);
-    }
 
-    /// <summary>
-    /// returns true if there is another scene after the current one in this act, else returns false.
-    /// </summary>
-    /// <returns></returns>
-    private bool IsNextScene()
-    {
-        if (dataManager.GetAct(directorData.currentAct).scenes[dataManager.GetAct(directorData.currentAct).scenes.Count - 1].Number == directorData.currentScene)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// returns true if there is another act after the current one in this script, else returns false.
-    /// </summary>
-    /// <returns></returns>
-    private bool IsNextAct()
-    {
-        if (dataManager.Acts[dataManager.Acts.Count - 1].Number == directorData.currentAct)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    private void ClearButtonPanel()
-    {
-        //loop thorugh buttons and put them away
-        foreach (Button button in momentButtons)
-        {
-            button.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
-        }
-        foreach (Button button in sceneButtons)
-        {
-			button.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
-        }
-        foreach(Button button in actButtons)
-        {
-            button.transform.position = actButtonAbovePosition.transform.position;
-        }
-    }
+//    private void ClearButtonPanel()
+//    {
+//        //loop thorugh buttons and put them away
+//        foreach (Button button in momentButtons)
+//        {
+//            button.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
+//        }
+//        foreach (Button button in sceneButtons)
+//        {
+//			button.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
+//        }
+//        foreach(Button button in actButtons)
+//        {
+//            button.transform.position = actButtonAbovePosition.transform.position;
+//        }
+//    }
     
     private void SetDirectorMode(DirectorMode mode)
     {
@@ -545,6 +435,7 @@ public class Director : MonoBehaviour
 			}
 			case DirectorMode.MOMENT:
 			{
+				//SetMomentButtons (directorData.currentAct, directorData.currentScene);
 				enableMomentButtons = true;
 				break;
 			}
@@ -556,6 +447,8 @@ public class Director : MonoBehaviour
 			button.gameObject.SetActive (enableSceneButtons);
 		foreach(Button button in momentButtons)
 			button.gameObject.SetActive (enableMomentButtons);
+			
+		directorMode = mode;
     }
 
 
@@ -579,34 +472,214 @@ public class Director : MonoBehaviour
     
     #endregion
     
+	#region Data Related Functions
+	
+	private void SetScene(int sceneNumber)
+	{
+		directorData.currentScene = sceneNumber;
+		//sceneText.text = "Scene: " + directorData.currentScene;
+		//sceneText.color = Color.white;
+		buttonTransitions.Clear ();
+		SetMomentButtons(directorData.currentAct, directorData.currentScene);
+	}
+	
+	private void SetAct(int actNumber)
+	{
+		directorData.currentAct = actNumber;
+		//actText.text = "Act: " + actNumber;
+		//actText.color = Color.white;
+		SetScene(1);
+	}
+	
+	/// <summary>
+	/// Returns the index of the first moment in the next scene.
+	/// note:this is used to flag when a scene change takes place for UI purposes
+	/// </summary>
+	/// <returns></returns>
+	private int GetNextSceneMomentId()
+	{
+		int act = directorData.currentAct;
+		int scene = directorData.currentScene;
+		
+		if (IsNextScene())
+		{
+			scene++;
+		}
+		else if (IsNextAct())
+		{
+			act++;
+			scene = 1;
+		}
+		return dataManager.GetCombinedIndex(act, scene, 0);
+	}
+	
+	/// <summary>
+	/// returns true if there is another scene after the current one in this act, else returns false.
+	/// </summary>
+	/// <returns></returns>
+	private bool IsNextScene()
+	{
+		if (dataManager.GetAct(directorData.currentAct).scenes[dataManager.GetAct(directorData.currentAct).scenes.Count - 1].Number == directorData.currentScene)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	/// <summary>
+	/// returns true if there is another act after the current one in this script, else returns false.
+	/// </summary>
+	/// <returns></returns>
+	private bool IsNextAct()
+	{
+		if (dataManager.Acts[dataManager.Acts.Count - 1].Number == directorData.currentAct)
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	#endregion
+	
+	#region GUI Callbacks
+	
+	private void HandleMomentButtonClick()
+	{
+		if(allowInput)
+		{
+			//ShiftButtonsUp();
+			//ShiftButtonsDown();
+			
+			if(directorData.currentMomentID == directorData.nextSceneMomentID)
+			{
+				if (IsNextScene())
+				{
+					directorData.currentScene++;
+					//This is really ghetto, works for now. Assumes PERFECT naming syntax project side.
+					StartCoroutine(ExecuteSceneTransition("Act" + directorData.currentAct + "Scene" + directorData.currentScene, 1f));
+				}
+				else if (IsNextAct())
+				{
+					directorData.currentAct++;
+					directorData.currentScene = 1;
+				}
+				directorData.nextSceneMomentID = GetNextSceneMomentId();
+				sceneText.text = "Current Scene: " + directorData.currentScene;
+				sceneText.color = Color.white;
+				actText.text = "Current Act: " + directorData.currentAct;
+			}
+		}
+		
+	}
+	
+	public void HandleActContextClick()
+	{
+		//actText.text = "Select Act";
+		//actText.color = Color.yellow;
+		
+		//ClearButtonPanel();
+		SetDirectorMode (DirectorMode.ACT);
+		int actsCount = dataManager.Acts.Count;
+		int placeCounter = 0;
+		//loop through the scenes in this act only
+		for (int i = 0; i < actsCount; i++)
+		{
+			//use the scene positions
+			actButtons[i].transform.position = sceneButtonsPosition[placeCounter].transform.position;
+			actButtons[i].GetComponent<RectTransform>().sizeDelta = sceneButtonsPosition[placeCounter].GetComponent<RectTransform>().rect.size;
+			placeCounter++;
+		}
+	}
+	
+	public void HandleSceneContextClick()
+	{
+		//sceneText.text = "Select Scene";
+		//sceneText.color = Color.yellow;
+		
+		//ClearButtonPanel();
+		SetDirectorMode (DirectorMode.SCENE);
+		
+		
+		//start at top position and place the current acts scenes
+		int scenesInThisAct = currentAct.scenes.Count;
+		int indexOffset = 0;
+		if (directorData.currentAct != 1)
+		{
+			//need to offset the list index if second act
+			//hacky would like more general
+			indexOffset = dataManager.GetAct(1).scenes.Count;
+		}
+		
+		int placeCounter = 0;
+		//loop through the scenes in this act only
+		for (int i = 0; i < scenesInThisAct; ++i)
+		{
+			sceneButtons[indexOffset + i].transform.position = sceneButtonsPosition[placeCounter].transform.position;
+			sceneButtons[indexOffset + i].GetComponent<RectTransform>().sizeDelta = sceneButtonsPosition[placeCounter].rect.size;
+			placeCounter++;
+		}
+		
+	}
+	
+	public void HandleMomentContextClick()
+	{
+		//SetMomentButtons (directorData.currentAct, directorData.currentScene);
+		SetDirectorMode (DirectorMode.MOMENT);
+	}
+	
+	private void HandleActButtonClick(Button clickedButton)
+	{
+		SetAct(GetNumberFromButton(clickedButton));
+		SetDirectorMode (DirectorMode.SCENE);
+	}
+	
+	private void HandleSceneButtonClick(Button clickedButton)
+	{
+		SetScene(GetNumberFromButton(clickedButton));
+		SetDirectorMode (DirectorMode.MOMENT);
+	}
+	
+	#endregion
+    
 	#region Coroutines
 	
 	//Info on Coroutines: http://docs.unity3d.com/Manual/Coroutines.html
-	
 
 	IEnumerator ExecuteSceneTransition(string sceneName, float delay)
 	{
 		allowInput = false;
-		secondaryInfoText.text = "Transitioning to next scene, please wait.";
+		secondaryInfoText.text = "Transitioning to " + sceneName + " please wait.";
 		yield return new WaitForSeconds(delay);
 		Application.LoadLevel (sceneName);
 	}
 	
+	//This is kind of a wierd recursive combo, sorry if it's confusing.
 	IEnumerator PlayCurrentMoment()
 	{
 		currentMomentSlider.minValue = 0f;
-		currentMomentSlider.maxValue = currentMoment.Duration;
+		currentMomentSlider.maxValue = currentRelativeMoment.Duration;
 		currentMomentTimer = MomentTimer(0f);
+		
+		Color originalColor = momentButtons[directorData.currentMomentID].image.color;
+		momentButtons[directorData.currentMomentID].image.color = Color.yellow;
+		
 		StartCoroutine(currentMomentTimer);
-		yield return new WaitForSeconds(currentMoment.Duration);
+		
+		yield return new WaitForSeconds(currentRelativeMoment.Duration);
+		
+		momentButtons[directorData.currentMomentID].image.color = originalColor;
 		StopCoroutine(currentMomentTimer);
 		currentMomentTimer = null;
-		
+		if(directorData.currentMomentID == GetNextSceneMomentId())
+		{
+			StartCoroutine(ExecuteSceneTransition("Act1Scene2", 1.5f));
+		}
 	}
 	
+	//Calls itself, stopped by PlayCurrentMoment
 	IEnumerator MomentTimer(float momentTime)
 	{
-		currentMomentSlider.value = currentMoment.Duration - momentTime;
+		currentMomentSlider.value = currentRelativeMoment.Duration - momentTime;
 		yield return new WaitForFixedUpdate();	//WaitForEndOfFrame() is laggier? Huh?
 		currentMomentTimer = MomentTimer(momentTime + Time.deltaTime);
 		StartCoroutine (currentMomentTimer);
@@ -617,8 +690,8 @@ public class Director : MonoBehaviour
 	#region Properties
 	
 	Act currentAct { get { return dataManager.GetAct (directorData.currentAct);}}
-	Scene currentScene { get { return dataManager.GetAct (directorData.currentAct).scenes[directorData.currentScene]; }}
-	Moment currentMoment { get { return dataManager.GetAct (directorData.currentAct).scenes[directorData.currentScene].moments[directorData.currentMomentID]; }}
+	Scene currentScene { get { return currentAct.scenes[directorData.currentScene - 1]; }}
+	Moment currentRelativeMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
 	
 	#endregion
 }
