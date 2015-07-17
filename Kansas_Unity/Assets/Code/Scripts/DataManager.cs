@@ -31,6 +31,11 @@ public class Scene
     {
         moments = momentList;
     }
+    
+    public bool ContainsMoment(Moment moment)
+    {
+    	return moments.Contains (moment);
+    }
 }
 
 public class Act
@@ -59,6 +64,7 @@ public class Act
         }
         return null;
     }
+    
 }
 
 public class Script
@@ -177,5 +183,5 @@ public class DataManager
 		int previousSceneMoments = mDataDoc.SelectNodes("script/act[@number = '" + act + "']/scene[@number < '" + scene + "']/moment").Count;
 		return momentIndex - previousSceneMoments - previousActsMoments;
     }
-    
+     
 }

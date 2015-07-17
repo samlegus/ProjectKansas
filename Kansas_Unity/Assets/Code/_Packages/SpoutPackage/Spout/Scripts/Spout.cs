@@ -163,7 +163,7 @@ namespace Spout{
 			gameview = UnityEditor.EditorWindow.GetWindow(gameviewType);
 			#endif
 
-
+			//_Enable();
 #if UNITY_EDITOR
 			if(_isEnabledInEditor || Application.isPlaying){
 				_Enable();
