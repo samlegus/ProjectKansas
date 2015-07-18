@@ -33,6 +33,7 @@ public class Director : MonoBehaviour
     private List<Button> sceneButtons = new List<Button>();//a button for each scene in script in order
     private List<Button> actButtons = new List<Button>();//a button for each act in script in order
 	private List<ButtonTransition> buttonTransitions = new List<ButtonTransition>();
+	private Dictionary<string, Animator> specialEffects = new Dictionary<string, Animator>();
 	
 	private bool allowInput = true;
 	private DirectorMode directorMode;
@@ -151,6 +152,7 @@ public class Director : MonoBehaviour
 		
 		StartCoroutine(currentMomentTimer);
 		
+		specialEffects[currentScene.moments[directorData.currentMomentID].SFXName].SetTrigger ("activate");
 		yield return new WaitForSeconds(currentRelativeMoment.Duration);
 		
 		momentButtons[directorData.currentMomentID].image.color = originalColor;
@@ -271,6 +273,11 @@ public class Director : MonoBehaviour
 
     private void LoadButtons()
     {
+    	foreach(GameObject obj in GameObject.FindGameObjectsWithTag ("SpecialFX"))
+    	{
+    		specialEffects.Add (obj.name, obj.GetComponent<Animator>());
+    	}
+    	
         //create a button for everymoment in script
         foreach (Act act in dataManager.Acts)
         {
@@ -301,15 +308,20 @@ public class Director : MonoBehaviour
                     newButton.GetComponentInChildren<Text>().text = moment.Title;
                     newButton.transform.SetParent(buttonPanel);
                     newButton.onClick.AddListener(HandleMomentButtonClick);
-                    newButton.name = "MomentButton";
+					newButton.name = "MomentButton (" + moment.Title + ")";
                     if(!currentScene.ContainsMoment(moment))
                     	newButton.interactable = false;
+                    else
+                    {
+                    	//System.Action onMoment = () => { specialEffects[moment.SFXName].SetTrigger ("activate");};
+                    	//newButton.onClick.AddListener (delegate { onMoment(); });
+                    }
                     momentButtons.Add(newButton);
                 }
             }
         }
     }
-   
+    
     private void ShiftButtonsUp()
     {
         if(directorData.currentMomentID == momentButtons.Count)
@@ -555,30 +567,30 @@ public class Director : MonoBehaviour
 	{
 		if(allowInput)
 		{
-			//ShiftButtonsUp();
-			//ShiftButtonsDown();
-			
-			if(directorData.currentMomentID == directorData.nextSceneMomentID)
-			{
-				if (IsNextScene())
-				{
-					directorData.currentScene++;
-					//This is really ghetto, works for now. Assumes PERFECT naming syntax project side.
-					StartCoroutine(ExecuteSceneTransition("Act" + directorData.currentAct + "Scene" + directorData.currentScene, 1f));
-				}
-				else if (IsNextAct())
-				{
-					directorData.currentAct++;
-					directorData.currentScene = 1;
-				}
-				directorData.nextSceneMomentID = GetNextSceneMomentID();
-				sceneText.text = "Current Scene: " + directorData.currentScene;
-				sceneText.color = Color.white;
-				actText.text = "Current Act: " + directorData.currentAct;
-			}
+//			//ShiftButtonsUp();
+//			//ShiftButtonsDown();
+//			
+//			if(directorData.currentMomentID == directorData.nextSceneMomentID)
+//			{
+//				if (IsNextScene())
+//				{
+//					directorData.currentScene++;
+//					//This is really ghetto, works for now. Assumes PERFECT naming syntax project side.
+//					StartCoroutine(ExecuteSceneTransition("Act" + directorData.currentAct + "Scene" + directorData.currentScene, 1f));
+//				}
+//				else if (IsNextAct())
+//				{
+//					directorData.currentAct++;
+//					directorData.currentScene = 1;
+//				}
+//				directorData.nextSceneMomentID = GetNextSceneMomentID();
+//				sceneText.text = "Current Scene: " + directorData.currentScene;
+//				sceneText.color = Color.white;
+//				actText.text = "Current Act: " + directorData.currentAct;
+//			}
 		}
-		
 	}
+
 	
 	public void HandleActContextClick()
 	{

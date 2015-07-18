@@ -8,12 +8,16 @@ public class Moment
     public string Title { get; set; }
     public string Line { get; set; }
     public float Duration { get; set;}
+    public string SFXName {get;set;}
+    public Vector3 Location {get;set;}
 
-    public Moment(string a_title, string a_line, float a_duration)
+    public Moment(string a_title, string a_line, float a_duration, Vector3 a_location, string a_sfxName)
     {
         Title = a_title;
         Line = a_line;
         Duration = a_duration;
+        SFXName = a_sfxName;
+        Location = a_location;
     }
 }
 
@@ -142,13 +146,30 @@ public class DataManager
                 {
                     string title = moment.Attributes.GetNamedItem("title").Value;
                     string line = moment.Attributes.GetNamedItem("line").Value;
-                    float duration = 1;
+                    string locationAsString = ("0.0, 0.0, 0.0");
+                    string durationAsString = "";
+                    string sfxName = "";
+                    float duration = 0f;
+                    Vector3 location = Vector3.zero;
                     
-//                    if(!Single.TryParse (moment.Attributes.GetNamedItem ("duration").Value, out duration))
-//                    	Debug.Log ("Error parsing moment duration.");
-                    
-
-                    Moment newMoment = new Moment(title, line, duration);
+					if(moment.HasAttribute("duration"))
+					{
+						durationAsString = moment.Attributes.GetNamedItem ("duration").Value;
+						if(!Single.TryParse(durationAsString, out duration))
+							Debug.Log ("XML moment earsing error, duration had invalid format");
+					}
+					
+					if(moment.HasAttribute ("location"))
+					{
+						locationAsString = moment.Attributes.GetNamedItem ("location").Value;
+						location = Vector3Helper.StringToVector3(locationAsString);
+					}
+						
+							
+					if(moment.HasAttribute ("sfx"))
+					   sfxName = moment.Attributes.GetNamedItem ("sfx").Value;
+					   
+                    Moment newMoment = new Moment(title, line, duration, location ,sfxName);
                     newScene.moments.Add(newMoment);
                 }
                 newAct.scenes.Add(newScene);
@@ -183,5 +204,14 @@ public class DataManager
 		int previousSceneMoments = mDataDoc.SelectNodes("script/act[@number = '" + act + "']/scene[@number < '" + scene + "']/moment").Count;
 		return momentIndex - previousSceneMoments - previousActsMoments;
     }
+    
+	public static class Vector3Helper
+	{
+		public static Vector3 StringToVector3(string value)
+		{
+			string[] temp = value.Replace(" ", "").Split(',');
+			return new Vector3(float.Parse(temp[0]),float.Parse(temp[1]),float.Parse(temp[2]));
+		}
+	}
      
 }
