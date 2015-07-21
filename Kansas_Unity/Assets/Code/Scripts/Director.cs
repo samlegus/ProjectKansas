@@ -232,20 +232,21 @@ public class Director : MonoBehaviour
 			bool vPressed = Input.GetButtonDown ("Vertical");	//True if button was pressed, false on release, hold, or no input
 			bool submitPressed = Input.GetButtonDown ("Submit");
 			
+			float mouseWheelAxis = Input.GetAxisRaw ("Mouse ScrollWheel");
+			
 			if(directorMode == DirectorMode.MOMENT)
 			{
-				if(vPressed && vAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1 )
+				if((vPressed && vAxis < 0) || mouseWheelAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1 )
 				{
 					UpdatePrimaryInfo();
 					selectedMomentButtonID = directorData.currentMomentID + 1;
 				}
 					
-				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID > dataManager.GetCombinedIndex(directorData.currentAct, directorData.currentScene, 0))
+				if((vPressed && vAxis > 0) || mouseWheelAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID > dataManager.GetCombinedIndex(directorData.currentAct, directorData.currentScene, 0))
 				{
 					UpdatePrimaryInfo();
 					selectedMomentButtonID = directorData.currentMomentID - 1;
-				}
-					
+				}	
 			}
 			
 			if(submitPressed && currentMomentTimer == null)
@@ -568,42 +569,42 @@ public class Director : MonoBehaviour
 		primaryInfoText.text = text;
     }
     
-    public void UpdatePrimaryInfoFor(Act act)
-    {
-    	string text = "";
-		text =
-			//"INFO MODE: ACT\n\n" +
-			"Act Info:\n\n"  +
-			"Number: " + act.Number + "\n" +
-			"Number of Scenes:" + act.scenes.Count;
-		primaryInfoText.text = text;
-    }
-    
-	private void UpdatePrimaryInfoFor(Scene scene)
-	{
-		string text = "";
-		text =
-			//"Current Act: " + currentAct.Number + "\n" +
-			"Scene Info:\n\n"  +
-			"Scene Number: " + scene.Number + "\n" +
-			"Number of Moments:" + scene.moments.Count;
-		primaryInfoText.text = text;
-	}
-	
-	private void UpdatePrimaryInfoFor(Moment moment)
-	{
-		string text = "";
-		text =
-			//"CONTROL MODE: MOMENT\n\n" +
-				//"Current Act: " + directorData.currentAct + "\n" +
-				//"Current Scene: " + directorData.currentScene + "\n\n" +
-				"Moment Info:\n\n"  +
-				"* Title: " + moment.Title + "\n" +
-				"* Line: " + moment.Line + "\n" +
-				"* Duration: " + moment.Duration + "\n" +
-				"* SFX: " + moment.SFXName + "\n";
-		primaryInfoText.text = text;
-	}
+//    public void UpdatePrimaryInfoFor(Act act)
+//    {
+//    	string text = "";
+//		text =
+//			//"INFO MODE: ACT\n\n" +
+//			"Act Info:\n\n"  +
+//			"Number: " + act.Number + "\n" +
+//			"Number of Scenes:" + act.scenes.Count;
+//		primaryInfoText.text = text;
+//    }
+//    
+//	private void UpdatePrimaryInfoFor(Scene scene)
+//	{
+//		string text = "";
+//		text =
+//			//"Current Act: " + currentAct.Number + "\n" +
+//			"Scene Info:\n\n"  +
+//			"Scene Number: " + scene.Number + "\n" +
+//			"Number of Moments:" + scene.moments.Count;
+//		primaryInfoText.text = text;
+//	}
+//	
+//	private void UpdatePrimaryInfoFor(Moment moment)
+//	{
+//		string text = "";
+//		text =
+//			//"CONTROL MODE: MOMENT\n\n" +
+//				//"Current Act: " + directorData.currentAct + "\n" +
+//				//"Current Scene: " + directorData.currentScene + "\n\n" +
+//				"Moment Info:\n\n"  +
+//				"* Title: " + moment.Title + "\n" +
+//				"* Line: " + moment.Line + "\n" +
+//				"* Duration: " + moment.Duration + "\n" +
+//				"* SFX: " + moment.SFXName + "\n";
+//		primaryInfoText.text = text;
+//	}
     
 #endregion
     
