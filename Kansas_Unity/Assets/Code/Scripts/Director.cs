@@ -234,13 +234,13 @@ public class Director : MonoBehaviour
 			
 			if(directorMode == DirectorMode.MOMENT)
 			{
-				if(vPressed && vAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1)
+				if(vPressed && vAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1 )
 				{
 					UpdatePrimaryInfo();
 					selectedMomentButtonID = directorData.currentMomentID + 1;
 				}
 					
-				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID >= dataManager.GetCombinedIndex(directorData.currentScene, directorData.currentAct, 0))
+				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID > dataManager.GetCombinedIndex(directorData.currentAct, directorData.currentScene, 0))
 				{
 					UpdatePrimaryInfo();
 					selectedMomentButtonID = directorData.currentMomentID - 1;
