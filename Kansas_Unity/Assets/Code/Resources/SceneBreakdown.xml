@@ -22,8 +22,8 @@
       <moment title="Sleep Dart" line="Da'fuck?" />
     </scene>
     <scene number="2">
-      <moment title="Glenada's PSA" line="" />
-      <moment title="Glenada's Lair" line="VO repeats" />
+      <moment title="Glenada's PSA" line="" sfx ="Pixie Dust" />
+      <moment title="Glenada's Lair" line="VO repeats" sfx = "Solar Flare" />
       <moment title="Crystal ball Elfesto" line="Here is Elfesto" />
       <moment title="Exposition" line="" />
       <moment title="Story of OZ" line="" />

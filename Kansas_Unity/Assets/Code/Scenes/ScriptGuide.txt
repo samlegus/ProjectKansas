@@ -1,0 +1,11 @@
+/*
+
+Current Scene Directory
+
+Act 1
+	Scene 1 - Dojo
+	Scene 2 - Leo's Lab
+	
+Everything else is placeholder.
+
+*/
