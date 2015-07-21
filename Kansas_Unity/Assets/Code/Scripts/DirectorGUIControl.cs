@@ -82,11 +82,16 @@ public partial class Director : MonoBehaviour
 			specialEffects.Add (obj.name, obj.GetComponent<Animator>());
 		}
 		
-		//create a button for everymoment in script
+		//TL;DR
+		/*		foreach act in dataManger.xml thing
+					make act button ( instantiate, setup onClick + onHover )
+					foreach scene in act
+						make scene button ( instantiate, setup onClick + onHover )
+							foreach moment in scene
+								make moment button ( instantiate, setup onClick ) */
+								
 		foreach (Act act in dataManager.Acts)
 		{
-			
-			//load the act buttons
 			Button newActButton = Instantiate<Button>(buttonPrefab);
 			actButtons.Add(newActButton);
 			newActButton.transform.position = actButtonAbovePosition.transform.position;
@@ -98,31 +103,27 @@ public partial class Director : MonoBehaviour
 			actHover.text = primaryInfoText;
 			actHover.textOnHover = 
 				"Act Info:\n\n"  +
-					"Number: " + act.Number + "\n" +
-					"Number of Scenes:" + act.scenes.Count;
-			
+				"Number: " + act.Number + "\n" +
+				"Number of Scenes:" + act.scenes.Count;
 			
 			newActButton.name = "ActButton";
 			if(act.Number == directorData.currentAct)
 				newActButton.image.color = Color.yellow;
-			// actButtons.Add(newActButton);
 			
 			foreach (Scene scene in dataManager.GetAct(act.Number).scenes)
 			{
-				//load the scene buttons
 				Button newSceneButton = Instantiate<Button>(buttonPrefab);
 				newSceneButton.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
 				newSceneButton.GetComponentInChildren<Text>().text = scene.Number.ToString();
 				newSceneButton.transform.SetParent(buttonPanel);
-				//this is how can add parameter to onclick
 				newSceneButton.onClick.AddListener(delegate { HandleSceneButtonClick(newSceneButton); });
 				
 				ButtonHover sceneHover = newSceneButton.gameObject.AddComponent<ButtonHover>();
 				sceneHover.text = primaryInfoText;
 				sceneHover.textOnHover = 
 					"Scene Info:\n\n"  +
-						"Scene Number: " + scene.Number + "\n" +
-						"Number of Moments:" + scene.moments.Count;
+					"Scene Number: " + scene.Number + "\n" +
+					"Number of Moments:" + scene.moments.Count;
 				
 				newSceneButton.name = "SceneButton Act" + act.Number + "Scene" + scene.Number;
 				if(scene.Number == currentScene.Number)
@@ -137,9 +138,8 @@ public partial class Director : MonoBehaviour
 					Button newMomentButton = Instantiate<Button>(buttonPrefab);
 					newMomentButton.GetComponentInChildren<Text>().text = moment.Title;
 					newMomentButton.transform.SetParent(buttonPanel);
-					//newButton.onClick.AddListener(HandleMomentButtonClick);
 					
-					System.Action momentClickAction = () => 
+					UnityAction momentClickAction = () => 
 					{
 						if(directorData.currentMomentID == momentIndex)
 						{
@@ -149,17 +149,15 @@ public partial class Director : MonoBehaviour
 					};
 					
 					newMomentButton.onClick.AddListener( delegate { momentClickAction(); });
-					//ButtonHover momentButtonHoverScript =  newMomentButton.gameObject.AddComponent<ButtonHover>();
-					//momentButtonHoverScript.onHover.AddListener (delegate { UpdatePrimaryInfoFor(moment);});
 					
 					ButtonHover momentHover = newMomentButton.gameObject.AddComponent<ButtonHover>();
 					momentHover.text = primaryInfoText;
 					momentHover.textOnHover = 
 						"Moment Info:\n\n"  +
-							"* Title: " + moment.Title + "\n" +
-							"* Line: " + moment.Line + "\n" +
-							"* Duration: " + moment.Duration + "\n" +
-							"* SFX: " + moment.SFXName + "\n";
+						"* Title: " + moment.Title + "\n" +
+						"* Line: " + moment.Line + "\n" +
+						"* Duration: " + moment.Duration + "\n" +
+						"* SFX: " + moment.SFXName + "\n";
 					
 					newMomentButton.name = "MomentButton (" + moment.Title + ")";
 					if(!currentScene.ContainsMoment(moment))
