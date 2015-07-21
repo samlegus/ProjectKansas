@@ -9,15 +9,17 @@ public class Moment
     public string Line { get; set; }
     public float Duration { get; set;}
     public string SFXName {get;set;}
-    public Vector3 Location {get;set;}
+    public Vector3 Location {get;set;} //not using, just left it there
+    public int Number {get;set;} //trying not to have to use this
 
-    public Moment(string a_title, string a_line, float a_duration, Vector3 a_location, string a_sfxName)
+    public Moment(string a_title, string a_line, float a_duration, Vector3 a_location, string a_sfxName, int a_number)
     {
         Title = a_title;
         Line = a_line;
         Duration = a_duration;
         SFXName = a_sfxName;
         Location = a_location;
+        Number = a_number;
     }
 }
 
@@ -136,6 +138,8 @@ public class DataManager
             newAct.Number = Int32.Parse(act.Attributes.GetNamedItem("number").Value);
             //loop scenes and add to act
             XmlNodeList scenesNodeList = act.SelectNodes("scene");
+            
+            int momentCounter = 0;
             foreach (XmlElement scene in scenesNodeList)
             {
                 Scene newScene = new Scene();
@@ -144,6 +148,7 @@ public class DataManager
                 XmlNodeList momentsNodeList = scene.SelectNodes("moment");
                 foreach (XmlElement moment in momentsNodeList)
                 {
+                	momentCounter++;
                     string title = moment.Attributes.GetNamedItem("title").Value;
                     string line = moment.Attributes.GetNamedItem("line").Value;
                     string locationAsString = ("0.0, 0.0, 0.0");
@@ -169,7 +174,7 @@ public class DataManager
 					if(moment.HasAttribute ("sfx"))
 					   sfxName = moment.Attributes.GetNamedItem ("sfx").Value;
 					   
-                    Moment newMoment = new Moment(title, line, duration, location ,sfxName);
+                    Moment newMoment = new Moment(title, line, duration, location ,sfxName, momentCounter);
                     newScene.moments.Add(newMoment);
                 }
                 newAct.scenes.Add(newScene);

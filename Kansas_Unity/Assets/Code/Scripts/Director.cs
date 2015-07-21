@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -46,7 +47,10 @@ public class Director : MonoBehaviour
 	
 	Act currentAct { get { return dataManager.GetAct (directorData.currentAct);}}
 	Scene currentScene { get { return currentAct.scenes[directorData.currentScene - 1]; }}
-	Moment currentRelativeMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
+	Moment currentMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
+	
+	int selectedMomentButtonID { get ;set;}
+	int selectedSceneID {get;set;}
 	
 #endregion
 	
@@ -92,17 +96,23 @@ public class Director : MonoBehaviour
 	private void Start()
 	{
 		LoadButtons();
-		SetScene (directorData.currentScene);
+		RegisterCallbacksToButtons();
 		directorData.nextSceneMomentID = GetNextSceneMomentID();
 		primaryInfoText.text = "";
-		primaryInfoText.text = "";
+		secondaryInfoText.text = "";
+		selectedMomentButtonID = directorData.currentMomentID;
+		selectedSceneID = directorData.currentScene;
+		SetMomentButtons(directorData.currentAct, directorData.currentScene);
 		SetDirectorMode (DirectorMode.MOMENT);
 	}
 	
 	private void Update()
 	{
+		
 		HandleButtonTransitions();
 		HandleInput ();
+		SyncMomentButtons ();
+		//UpdatePrimaryInfo();
 	}
 	
 	private void OnApplicationQuit()
@@ -125,11 +135,10 @@ public class Director : MonoBehaviour
 	{
 		allowInput = false;
 		float newDelay = delayDuration - Time.deltaTime;
-		secondaryInfoText.text = "Transitioning to " + sceneName + " in " + delayDuration.ToString () + " seconds...";
+		secondaryInfoText.text = "Transitioning to " + " in " + delayDuration.ToString () + " seconds...";
 		yield return new WaitForSeconds(delayDuration - newDelay);
 		if(delayDuration <= 0)
 		{
-			directorData.currentScene++;
 			Application.LoadLevel (sceneName);
 		}		
 		else
@@ -144,21 +153,31 @@ public class Director : MonoBehaviour
 	IEnumerator PlayCurrentMoment()
 	{
 		currentMomentSlider.minValue = 0f;
-		currentMomentSlider.maxValue = currentRelativeMoment.Duration;
+		currentMomentSlider.maxValue = currentMoment.Duration;
 		currentMomentTimer = MomentTimer(0f);
+		
+		selectedMomentButtonID = directorData.currentMomentID;
 		
 		Color originalColor = momentButtons[directorData.currentMomentID].image.color;
 		momentButtons[directorData.currentMomentID].image.color = Color.yellow;
 		
 		StartCoroutine(currentMomentTimer);
 		
-		specialEffects[currentScene.moments[directorData.currentMomentID].SFXName].SetTrigger ("activate");
-		yield return new WaitForSeconds(currentRelativeMoment.Duration);
+		int relativeIndex = dataManager.GetRelativeIndex(directorData.currentAct, directorData.currentScene, directorData.currentMomentID);
+		if(!System.String.IsNullOrEmpty (currentScene.moments[relativeIndex].SFXName))
+			specialEffects[currentScene.moments[relativeIndex].SFXName].SetTrigger ("activate");
+		
+		if(currentMoment.Duration > 0)
+			yield return new WaitForSeconds(currentMoment.Duration);
+		else
+			yield return null;
 		
 		momentButtons[directorData.currentMomentID].image.color = originalColor;
 		StopCoroutine(currentMomentTimer);
 		currentMomentTimer = null;
-		ShiftButtonsUp ();
+		ShiftButtonsUp();
+		selectedMomentButtonID = directorData.currentMomentID;
+		//selectedMomentButtonID = directorData.currentMomentID;
 		if(directorData.currentMomentID == directorData.nextSceneMomentID && sceneTransition == null && IsNextScene ())
 		{
 			//StartCoroutine(ExecuteSceneTransition("Act1Scene2", 1.5f));
@@ -173,6 +192,7 @@ public class Director : MonoBehaviour
 			if(!IsNextScene () && directorData.currentAct < dataManager.Acts.Count)
 				SetAct (directorData.currentAct++);
 			
+			directorData.currentMomentID++;
 			StartCoroutine(ExecuteSceneTransition(sceneName, 1.5f));
 		}
 	}
@@ -180,7 +200,7 @@ public class Director : MonoBehaviour
 	//Calls itself, stopped by PlayCurrentMoment
 	IEnumerator MomentTimer(float momentTime)
 	{
-		currentMomentSlider.value = currentRelativeMoment.Duration - momentTime;
+		currentMomentSlider.value = currentMoment.Duration - momentTime;
 		yield return new WaitForFixedUpdate();	//WaitForEndOfFrame() is laggier? Huh?
 		currentMomentTimer = MomentTimer(momentTime + Time.deltaTime);
 		StartCoroutine (currentMomentTimer);
@@ -215,19 +235,27 @@ public class Director : MonoBehaviour
 			if(directorMode == DirectorMode.MOMENT)
 			{
 				if(vPressed && vAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1)
-					ShiftButtonsUp ();
-				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0)
-					ShiftButtonsDown ();
+				{
+					UpdatePrimaryInfo();
+					selectedMomentButtonID = directorData.currentMomentID + 1;
+				}
+					
+				if(vPressed && vAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID >= dataManager.GetCombinedIndex(directorData.currentScene, directorData.currentAct, 0))
+				{
+					UpdatePrimaryInfo();
+					selectedMomentButtonID = directorData.currentMomentID - 1;
+				}
+					
 			}
 			
 			if(submitPressed && currentMomentTimer == null)
 			{
-				StartCoroutine (PlayCurrentMoment ());
+				StartCoroutine (PlayCurrentMoment());
 			}
 				
 		}
 	}
-	
+
     /// <summary>
     /// sets the positions of the moment buttons with given act , scene's first moment at active position.
     /// note:this also updates the directorData.currentMomentID, directorData.nextSceneMomentID vars.
@@ -238,6 +266,7 @@ public class Director : MonoBehaviour
     {
         //ClearButtonPanel();
         directorData.currentMomentID = dataManager.GetCombinedIndex(act, scene, 0);
+        selectedMomentButtonID = directorData.currentMomentID;
 
 		for(int i = 0; i < momentButtons.Count; ++i)
 		{
@@ -281,47 +310,106 @@ public class Director : MonoBehaviour
         //create a button for everymoment in script
         foreach (Act act in dataManager.Acts)
         {
+        
             //load the act buttons
             Button newActButton = Instantiate<Button>(buttonPrefab);
+			actButtons.Add(newActButton);
             newActButton.transform.position = actButtonAbovePosition.transform.position;
-            newActButton.GetComponentInChildren<Text>().text = "Act " + act.Number;
+            newActButton.GetComponentInChildren<Text>().text = act.Number.ToString();
             newActButton.transform.SetParent(buttonPanel);
             newActButton.onClick.AddListener(delegate { HandleActButtonClick(newActButton); });
+			
+			ButtonHover actHover = newActButton.gameObject.AddComponent<ButtonHover>();
+			actHover.text = primaryInfoText;
+			actHover.textOnHover = 
+					"Act Info:\n\n"  +
+					"Number: " + act.Number + "\n" +
+					"Number of Scenes:" + act.scenes.Count;
+			
+			
             newActButton.name = "ActButton";
-            actButtons.Add(newActButton);
-
+            if(act.Number == directorData.currentAct)
+            	newActButton.image.color = Color.yellow;
+           // actButtons.Add(newActButton);
+			
             foreach (Scene scene in dataManager.GetAct(act.Number).scenes)
             {
                 //load the scene buttons
                 Button newSceneButton = Instantiate<Button>(buttonPrefab);
 				newSceneButton.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
-                newSceneButton.GetComponentInChildren<Text>().text = "Scene: " + scene.Number;
+                newSceneButton.GetComponentInChildren<Text>().text = scene.Number.ToString();
                 newSceneButton.transform.SetParent(buttonPanel);
                 //this is how can add parameter to onclick
                 newSceneButton.onClick.AddListener(delegate { HandleSceneButtonClick(newSceneButton); });
-                newSceneButton.name = "SceneButton";
+				
+				ButtonHover sceneHover = newSceneButton.gameObject.AddComponent<ButtonHover>();
+				sceneHover.text = primaryInfoText;
+				sceneHover.textOnHover = 
+					"Scene Info:\n\n"  +
+					"Scene Number: " + scene.Number + "\n" +
+					"Number of Moments:" + scene.moments.Count;
+						
+                newSceneButton.name = "SceneButton Act" + act.Number + "Scene" + scene.Number;
+				if(scene.Number == currentScene.Number)
+					newSceneButton.image.color = Color.yellow;
                 sceneButtons.Add(newSceneButton);
-
+               
+               	int momentCounter = -1;
                 foreach (Moment moment in dataManager.GetAct(act.Number).GetScene(scene.Number).moments)
                 {
-                    Button newButton = Instantiate<Button>(buttonPrefab);
-                    newButton.GetComponentInChildren<Text>().text = moment.Title;
-                    newButton.transform.SetParent(buttonPanel);
-                    newButton.onClick.AddListener(HandleMomentButtonClick);
-					newButton.name = "MomentButton (" + moment.Title + ")";
+                	momentCounter++;
+                	int momentIndex = dataManager.GetCombinedIndex(act.Number, scene.Number, 0) + momentCounter;
+                    Button newMomentButton = Instantiate<Button>(buttonPrefab);
+                    newMomentButton.GetComponentInChildren<Text>().text = moment.Title;
+                    newMomentButton.transform.SetParent(buttonPanel);
+                    //newButton.onClick.AddListener(HandleMomentButtonClick);
+                    
+                    System.Action momentClickAction = () => 
+                    {
+                    	if(directorData.currentMomentID == momentIndex)
+                    	{
+                    		StartCoroutine (PlayCurrentMoment ());
+                    	}
+						selectedMomentButtonID = momentIndex;
+                 	};
+                 	
+					newMomentButton.onClick.AddListener( delegate { momentClickAction(); });
+					//ButtonHover momentButtonHoverScript =  newMomentButton.gameObject.AddComponent<ButtonHover>();
+					//momentButtonHoverScript.onHover.AddListener (delegate { UpdatePrimaryInfoFor(moment);});
+					
+					ButtonHover momentHover = newMomentButton.gameObject.AddComponent<ButtonHover>();
+					momentHover.text = primaryInfoText;
+					momentHover.textOnHover = 
+						"Moment Info:\n\n"  +
+							"* Title: " + moment.Title + "\n" +
+							"* Line: " + moment.Line + "\n" +
+							"* Duration: " + moment.Duration + "\n" +
+							"* SFX: " + moment.SFXName + "\n";
+					
+					newMomentButton.name = "MomentButton (" + moment.Title + ")";
                     if(!currentScene.ContainsMoment(moment))
-                    	newButton.interactable = false;
+                    	newMomentButton.interactable = false;
                     else
                     {
                     	//System.Action onMoment = () => { specialEffects[moment.SFXName].SetTrigger ("activate");};
                     	//newButton.onClick.AddListener (delegate { onMoment(); });
                     }
-                    momentButtons.Add(newButton);
+                    momentButtons.Add(newMomentButton);
                 }
             }
         }
     }
     
+    private void RegisterCallbacksToButtons()
+    {
+    	for(int i = 0 ; i < dataManager.Acts.Count; ++i)
+    	{
+    		//ButtonHover actHover = actButtons[i].gameObject.AddComponent<ButtonHover>();
+    		//actHover.onHover.AddListener (delegate{ UpdatePrimaryInfoFor(dataManager.GetAct(i));});
+    		//EventTrigger trigger =
+    		
+    	}
+    }
     private void ShiftButtonsUp()
     {
         if(directorData.currentMomentID == momentButtons.Count)
@@ -418,6 +506,104 @@ public class Director : MonoBehaviour
        directorData.currentMomentID--;
     }
     
+    private void SyncMomentButtons()
+    {
+    	if(selectedMomentButtonID != directorData.currentMomentID)
+    	{
+    		if(selectedMomentButtonID > directorData.currentMomentID)
+    		{
+				print (selectedMomentButtonID);
+    			for(int i = 0 ; i < selectedMomentButtonID - directorData.currentMomentID; ++i)
+    			{
+    				ShiftButtonsUp ();
+    			}
+    		}
+			if(selectedMomentButtonID < directorData.currentMomentID)
+			{
+				for(int i = 0 ; i < directorData.currentMomentID - selectedMomentButtonID; ++i)
+				{
+					ShiftButtonsDown ();
+				}
+			}
+			
+    	}
+    }
+     
+    private void UpdatePrimaryInfo()
+    {
+		string text = "";
+		switch(directorMode)
+		{
+			case DirectorMode.ACT:
+			{
+				text =
+					"CONTROL MODE: ACT\n\n" +
+					"Current Act: " + currentAct.Number + "\n" +
+					"Number of Scenes:" + currentAct.scenes.Count;
+				break;
+			}
+			case DirectorMode.SCENE:
+			{
+				text =
+					"CONTROL MODE: SCENE\n\n" +
+					"Current Act: " + currentAct.Number + "\n" +
+					"Current Scene: " + currentScene.Number + "\n" +
+					"Number of Moments:" + currentScene.moments.Count;
+				break;
+			}
+			case DirectorMode.MOMENT:
+			{
+				text =
+					"CONTROL MODE: MOMENT\n\n" +
+					"Current Act: " + directorData.currentAct + "\n" +
+					"Current Scene: " + directorData.currentScene + "\n\n" +
+					"Moment Info:\n\n"  +
+					"* Title: " + currentMoment.Title + "\n" +
+					"* Line: " + currentMoment.Line + "\n" +
+					"* Duration: " + currentMoment.Duration + "\n" +
+					"* SFX: " + currentMoment.SFXName + "\n";
+				break;
+			}
+		}
+		primaryInfoText.text = text;
+    }
+    
+    public void UpdatePrimaryInfoFor(Act act)
+    {
+    	string text = "";
+		text =
+			//"INFO MODE: ACT\n\n" +
+			"Act Info:\n\n"  +
+			"Number: " + act.Number + "\n" +
+			"Number of Scenes:" + act.scenes.Count;
+		primaryInfoText.text = text;
+    }
+    
+	private void UpdatePrimaryInfoFor(Scene scene)
+	{
+		string text = "";
+		text =
+			//"Current Act: " + currentAct.Number + "\n" +
+			"Scene Info:\n\n"  +
+			"Scene Number: " + scene.Number + "\n" +
+			"Number of Moments:" + scene.moments.Count;
+		primaryInfoText.text = text;
+	}
+	
+	private void UpdatePrimaryInfoFor(Moment moment)
+	{
+		string text = "";
+		text =
+			//"CONTROL MODE: MOMENT\n\n" +
+				//"Current Act: " + directorData.currentAct + "\n" +
+				//"Current Scene: " + directorData.currentScene + "\n\n" +
+				"Moment Info:\n\n"  +
+				"* Title: " + moment.Title + "\n" +
+				"* Line: " + moment.Line + "\n" +
+				"* Duration: " + moment.Duration + "\n" +
+				"* SFX: " + moment.SFXName + "\n";
+		primaryInfoText.text = text;
+	}
     
 #endregion
     
@@ -440,7 +626,7 @@ public class Director : MonoBehaviour
 		//sceneText.text = "Scene: " + directorData.currentScene;
 		//sceneText.color = Color.white;
 		buttonTransitions.Clear ();
-		SetMomentButtons(directorData.currentAct, directorData.currentScene);
+		//SetMomentButtons(directorData.currentAct, directorData.currentScene);
 	}
 	
 	private void SetAct(int actNumber)
@@ -538,6 +724,7 @@ public class Director : MonoBehaviour
 			button.gameObject.SetActive (enableMomentButtons);
 		
 		directorMode = mode;
+		UpdatePrimaryInfo ();
 	}
 	
 	/// <summary>
@@ -619,7 +806,6 @@ public class Director : MonoBehaviour
 		//ClearButtonPanel();
 		SetDirectorMode (DirectorMode.SCENE);
 		
-		
 		//start at top position and place the current acts scenes
 		int scenesInThisAct = currentAct.scenes.Count;
 		int indexOffset = 0;
@@ -644,19 +830,22 @@ public class Director : MonoBehaviour
 	public void HandleMomentContextClick()
 	{
 		//SetMomentButtons (directorData.currentAct, directorData.currentScene);
+		//UpdatePrimaryInfo ();
 		SetDirectorMode (DirectorMode.MOMENT);
 	}
 	
 	private void HandleActButtonClick(Button clickedButton)
 	{
 		SetAct(GetNumberFromButton(clickedButton));
-		SetDirectorMode (DirectorMode.SCENE);
+		StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + 1, .25f));
 	}
 	
 	private void HandleSceneButtonClick(Button clickedButton)
 	{
 		SetScene(GetNumberFromButton(clickedButton));
-		SetDirectorMode (DirectorMode.MOMENT);
+		StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + currentScene.Number, .25f));
+		//SetMomentButtons (directorData.currentAct, directorData.currentScene);
+		//SetDirectorMode (DirectorMode.MOMENT);
 	}
 	
 #endregion

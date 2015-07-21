@@ -2,7 +2,7 @@
   <act number="1">
     <scene number="1">
       <moment title="Earth Apocalypse" line="The earth ended" duration = "1.5" location = "1.0, 5.0, 0.0" sfx = "Fire" />
-      <moment title="Meme" line="The apocalypse started" sfx = "Ice" />
+      <moment title="Meme" line="The apocalypse started" duration = "0.75" sfx = "Ice" />
       <moment title="Humanity dissolves" line="After the end" />
       <moment title="Witches tecnhomancing" line="...it soon became clear" />
       <moment title="Witches gain power" line="These technomancers used their control of system technologies" />
