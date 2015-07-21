@@ -124,7 +124,7 @@ public class DataManager
 
     public DataManager()
     {
-        mDataDoc.Load(@"./Assets/Code/Data/SceneBreakdown.xml");
+        mDataDoc.Load(@"./Assets/Code/Resources/SceneBreakdown.xml");
         if (mDataDoc.ChildNodes.Count != 1)
         {
             Debug.Log("Data file did not load.");

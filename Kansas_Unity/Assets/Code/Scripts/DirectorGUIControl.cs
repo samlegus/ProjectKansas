@@ -150,14 +150,14 @@ public partial class Director : MonoBehaviour
 					
 					newMomentButton.onClick.AddListener( delegate { momentClickAction(); });
 					
-					ButtonHover momentHover = newMomentButton.gameObject.AddComponent<ButtonHover>();
-					momentHover.text = primaryInfoText;
-					momentHover.textOnHover = 
-						"Moment Info:\n\n"  +
-						"* Title: " + moment.Title + "\n" +
-						"* Line: " + moment.Line + "\n" +
-						"* Duration: " + moment.Duration + "\n" +
-						"* SFX: " + moment.SFXName + "\n";
+//					ButtonHover momentHover = newMomentButton.gameObject.AddComponent<ButtonHover>();
+//					momentHover.text = primaryInfoText;
+//					momentHover.textOnHover = 
+//						"Moment Info:\n\n"  +
+//						"* Title: " + moment.Title + "\n" +
+//						"* Line: " + moment.Line + "\n" +
+//						"* Duration: " + moment.Duration + "\n" +
+//						"* SFX: " + moment.SFXName + "\n";
 					
 					newMomentButton.name = "MomentButton (" + moment.Title + ")";
 					if(!currentScene.ContainsMoment(moment))
@@ -480,8 +480,7 @@ public partial class Director : MonoBehaviour
 			//			}
 		}
 	}
-	
-	
+
 	public void HandleActContextClick()
 	{
 		if(allowInput)

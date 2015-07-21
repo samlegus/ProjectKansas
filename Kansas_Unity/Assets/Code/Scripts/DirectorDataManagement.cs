@@ -10,23 +10,23 @@ public partial class Director : MonoBehaviour
 
 #region Inspector
 	
-	public DirectorData directorData;	//ScriptableObject to allow us to persist information about the UI between scenes
+	public static DirectorData directorData;	//ScriptableObject to allow us to persist information about the UI between scenes
 	
 #endregion
 	
 #region Private Variables
 	
-	private DataManager dataManager = new DataManager();//this loads xml data and objectify's it so can access data
+	private static DataManager dataManager;// = new DataManager();//this loads xml data and objectify's it so can access data
 	
 #endregion
 	
 #region Properties
 	
-	Act currentAct { get { return dataManager.GetAct (directorData.currentAct);}}
-	Scene currentScene { get { return currentAct.scenes[directorData.currentScene - 1]; }}
-	Moment currentMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
+	private Act currentAct { get { return dataManager.GetAct (directorData.currentAct);}}
+	private Scene currentScene { get { return currentAct.scenes[directorData.currentScene - 1]; }}
+	private Moment currentMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
 	
-	int selectedMomentButtonID { get ;set;}
+	private int selectedMomentButtonID { get ;set;}
 	//int selectedSceneID {get;set;}
 	
 #endregion
@@ -109,7 +109,7 @@ public partial class Director : MonoBehaviour
 		return true;
 	}
 	
-	private bool IsFinalAct()
+	private static bool IsFinalAct()
 	{
 		return directorData.currentAct == dataManager.Acts.Count;
 	}
@@ -122,22 +122,22 @@ public partial class Director : MonoBehaviour
 		
 		switch(mode)
 		{
-		case DirectorMode.ACT:
-		{
-			enableActButtons = true;
-			break;
-		}
-		case DirectorMode.SCENE:
-		{
-			enableSceneButtons = true;
-			break;
-		}
-		case DirectorMode.MOMENT:
-		{
-			//SetMomentButtons (directorData.currentAct, directorData.currentScene);
-			enableMomentButtons = true;
-			break;
-		}
+			case DirectorMode.ACT:
+			{
+				enableActButtons = true;
+				break;
+			}
+			case DirectorMode.SCENE:
+			{
+				enableSceneButtons = true;
+				break;
+			}
+			case DirectorMode.MOMENT:
+			{
+				//SetMomentButtons (directorData.currentAct, directorData.currentScene);
+				enableMomentButtons = true;
+				break;
+			}
 		}
 		
 		foreach(Button button in actButtons)

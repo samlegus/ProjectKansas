@@ -52,6 +52,7 @@ public partial class Director : MonoBehaviour
 		StartCoroutine(currentMomentTimer);
 		
 		int relativeIndex = dataManager.GetRelativeIndex(directorData.currentAct, directorData.currentScene, directorData.currentMomentID);
+		
 		if(!System.String.IsNullOrEmpty (currentScene.moments[relativeIndex].SFXName))
 			specialEffects[currentScene.moments[relativeIndex].SFXName].SetTrigger ("activate");
 		
