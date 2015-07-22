@@ -12,6 +12,7 @@ public partial class Director : MonoBehaviour
 	
 	//private IEnumerator currentMomentTimer;
 	private IEnumerator sceneTransition;
+	public float sceneTransitionDelay = 1.0f;
 	
 #endregion
 
@@ -30,36 +31,39 @@ public partial class Director : MonoBehaviour
 	{
 		allowInput = false;
 		float newDelay = delayDuration - Time.deltaTime;
-		secondaryInfoText.text = "Transitioning to " + sceneName + " in " + delayDuration.ToString () + " seconds...";
 		
 		yield return new WaitForSeconds(delayDuration - newDelay);
 		
 		if(delayDuration <= 0)
 		{
+			secondaryInfoText.text = "Transitioning to scene NOW...";
 			Application.LoadLevel (sceneName);
 		}		
 		else
 		{
+			secondaryInfoText.text = "Transitioning to scene in " + newDelay.ToString () + "seconds.";
 			delayDuration = newDelay;
 			sceneTransition = ExecuteSceneTransition(sceneName, delayDuration);
 			StartCoroutine(sceneTransition);
 		}	
 	}
 	
+	//Overload w/ int instead of string
 	IEnumerator ExecuteSceneTransition(int sceneIndex, float delayDuration)
 	{
 		allowInput = false;
 		float newDelay = delayDuration - Time.deltaTime;
-		//secondaryInfoText.text = "Transitioning to " + sceneName + " in " + delayDuration.ToString () + " seconds...";
 		
 		yield return new WaitForSeconds(delayDuration - newDelay);
 		
 		if(delayDuration <= 0)
 		{
+			secondaryInfoText.text = "Transitioning to scene NOW...";
 			Application.LoadLevel (sceneIndex);
 		}		
 		else
 		{
+			secondaryInfoText.text = "Transitioning to scene in " + newDelay.ToString () + "seconds.";
 			delayDuration = newDelay;
 			sceneTransition = ExecuteSceneTransition(sceneIndex, delayDuration);
 			StartCoroutine(sceneTransition);
@@ -67,66 +71,52 @@ public partial class Director : MonoBehaviour
 	}
 	
 	//This is kind of a wierd recursive combo, sorry if it's confusing.
-	IEnumerator PlayCurrentMoment()
+	private void PlayCurrentMoment()
 	{
+		currentMomentSlider.minValue = 0f;
+		currentMomentSlider.maxValue = currentMoment.Duration;
 		
-		Button button = momentButtons[directorData.currentMomentID];
-		Slider slider = button.GetComponentInChildren<Slider>();
-		slider.transform.localScale = Vector3.one;
-		
-		IEnumerator momentTimer = MomentTimer (null, 0f, button, slider);
-		
-		selectedMomentButtonID = directorData.currentMomentID;
-		
-		Color originalColor = momentButtons[directorData.currentMomentID].image.color;
-		button.image.color = Color.yellow;
+		IEnumerator momentTimer = MomentTimer (0f, currentMomentButton, currentMomentSlider);
 		
 		StartCoroutine(momentTimer);
-		
-		int relativeIndex = dataManager.GetRelativeIndex(directorData.currentAct, directorData.currentScene, directorData.currentMomentID);
-		
-		if(!System.String.IsNullOrEmpty (currentScene.moments[relativeIndex].SFXName))
-			specialEffects[currentScene.moments[relativeIndex].SFXName].SetTrigger ("activate");
-		
-		if(currentMoment.Duration > 0)
-			yield return new WaitForSeconds(currentMoment.Duration);
-		else
-			yield return null;
-		
-		button.image.color = originalColor;
 	
-		slider.transform.localScale = Vector3.zero;
-		slider.GetComponent<RectTransform>().sizeDelta = button.GetComponent<RectTransform>().rect.size;
-	
-		//selectedMomentButtonID = directorData.currentMomentID;
-//		
-//		if(directorData.currentMomentID == directorData.nextSceneMomentID && sceneTransition == null && IsNextScene ())
-//		{
-//			//StartCoroutine(ExecuteSceneTransition("Act1Scene2", 1.5f));
-//			string actSubstring = "Act" + directorData.currentAct;
-//			string sceneSubstring = "Scene" + directorData.currentScene++;
-//			
-//			if(!IsNextScene ())
-//				actSubstring = "Act" + directorData.currentAct++;
-//			
-//			string sceneName = actSubstring + sceneSubstring;
-//			
-//			if(!IsNextScene () && directorData.currentAct < dataManager.Acts.Count)
-//				SetAct (directorData.currentAct++);
-//			
-//			directorData.currentMomentID++;
-//			StartCoroutine(ExecuteSceneTransition(sceneName, 1.5f));
-//		}
+		if(!System.String.IsNullOrEmpty (currentMoment.SFXName))
+			specialEffects[currentMoment.SFXName].SetTrigger ("activate");
 	}
 	
-	//Calls itself, stopped by PlayCurrentMoment
-	IEnumerator MomentTimer(IEnumerator momentTimer, float momentTime, Button button, Slider slider)
-	{
+	/*  Diagram for PlayCurrentMoment + MomentTimer
+	
+		float t = 0f;
+		PlayCurrentMoment() ------> StartMomentTimer(t, button, slider) ---->  (t < currentMoment.Duration) ? yes : no ----> Finish
+											^															 	   |
+											|															 	   v
+											--------------------- t = t + time.deltaTime -----------------------	
+	*/
+	
+	IEnumerator MomentTimer(float momentTime, Button button, Slider slider)
+	{	
+		if(momentTime >= 0)
+		{
+			slider.transform.localScale = Vector3.one;
+			button.image.color = Color.yellow;
+		}
+
 		slider.GetComponent<RectTransform>().sizeDelta = button.GetComponent<RectTransform>().rect.size;
 		slider.value = slider.maxValue - momentTime;
-		yield return new WaitForFixedUpdate();	
-		momentTimer = MomentTimer(momentTimer, momentTime + Time.deltaTime, button, slider);
-		StartCoroutine (momentTimer);
+	
+		yield return null;	
+		
+		if(momentTime >= slider.maxValue)
+		{
+			slider.transform.localScale = Vector3.zero;
+			slider.value = slider.minValue;
+			button.image.color = Color.white;
+		}
+		else
+		{
+			IEnumerator momentTimer = MomentTimer(momentTime + Time.deltaTime, button, slider);
+			StartCoroutine (momentTimer);
+		}
 	}
 	
 #endregion

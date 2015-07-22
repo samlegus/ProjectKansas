@@ -10,34 +10,6 @@ public partial class Director : MonoBehaviour
 {
 	#region GUI Callback Functions
 	
-	private void HandleMomentButtonClick()
-	{
-		if(allowInput)
-		{
-			//			//ShiftButtonsUp();
-			//			//ShiftButtonsDown();
-			//			
-			//			if(directorData.currentMomentID == directorData.nextSceneMomentID)
-			//			{
-			//				if (IsNextScene())
-			//				{
-			//					directorData.currentScene++;
-			//					//This is really ghetto, works for now. Assumes PERFECT naming syntax project side.
-			//					StartCoroutine(ExecuteSceneTransition("Act" + directorData.currentAct + "Scene" + directorData.currentScene, 1f));
-			//				}
-			//				else if (IsNextAct())
-			//				{
-			//					directorData.currentAct++;
-			//					directorData.currentScene = 1;
-			//				}
-			//				directorData.nextSceneMomentID = GetNextSceneMomentID();
-			//				sceneText.text = "Current Scene: " + directorData.currentScene;
-			//				sceneText.color = Color.white;
-			//				actText.text = "Current Act: " + directorData.currentAct;
-			//			}
-		}
-	}
-	
 	public void HandleActContextClick()
 	{
 		if(allowInput)
@@ -104,18 +76,20 @@ public partial class Director : MonoBehaviour
 		if(allowInput)
 		{
 			SetScene(GetNumberFromButton(clickedButton));
-			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + currentScene.Number, .25f));
+			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + currentScene.Number, sceneTransitionDelay));
 		}
 	}
 	
 	public void HandleNextSceneButtonClick()
 	{
-		StartCoroutine(ExecuteSceneTransition(nextSceneIndex, .5f));
+		sceneTransition = ExecuteSceneTransition(nextSceneIndex, sceneTransitionDelay);
+		StartCoroutine(sceneTransition);
 	}
 	
 	public void HandlePrevSceneButtonClick()
 	{
-		StartCoroutine(ExecuteSceneTransition(prevSceneIndex, .5f));
+		sceneTransition = ExecuteSceneTransition(prevSceneIndex, sceneTransitionDelay);
+		StartCoroutine(sceneTransition);
 	}
 	
 	#endregion

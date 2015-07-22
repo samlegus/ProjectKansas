@@ -15,7 +15,6 @@ public partial class Director : MonoBehaviour
 #region Private Variables
 
 	private bool allowInput = true;
-	private static int callOrder = 0;
 	
 #endregion
 	
@@ -37,11 +36,10 @@ public partial class Director : MonoBehaviour
 		selectedMomentButtonID = directorData.currentMomentID;
 		
 		LoadButtons();
+		
 		primaryInfoText.text = "";
 		secondaryInfoText.text = "";
-		//RegisterCallbacksToButtons();
 		
-		//selectedSceneID = directorData.currentScene;
 		SetMomentButtons(directorData.currentAct, directorData.currentScene);
 		SetDirectorMode (DirectorMode.MOMENT);
 	}
@@ -78,7 +76,6 @@ public partial class Director : MonoBehaviour
 		static Startup()
 		{
 			levelLoadedFromEditor = true;
-			//UnityEditor.EditorApplication.update += Update;
 		}
 	}
 	#endif
@@ -86,13 +83,7 @@ public partial class Director : MonoBehaviour
 	
 	private void SetDirectorDataForThisScene()
 	{
-		
-		//dataManager = new DataManager();
-		//directorData = Resources.Load ("DirectorData") as DirectorData;
 		string sceneName = Application.loadedLevelName;
-		//"Act1Scene2" after this would result in "12"
-		//string[] numbersOnly = sceneName.Split ("Act".ToCharArray ());
-		
 		char[] numbersOnly = new System.String(sceneName.Where(Char.IsDigit).ToArray()).ToCharArray ();
 		
 		foreach(char c in numbersOnly)
@@ -107,8 +98,6 @@ public partial class Director : MonoBehaviour
 		
 		directorData.currentAct = act;
 		directorData.currentScene = scene;
-		//directorData.currentMomentID = 	dataManager.GetCombinedIndex(act, scene, 0);
-		//directorData.nextSceneMomentID = GetNextSceneMomentID ();	
 	}
 	
 	

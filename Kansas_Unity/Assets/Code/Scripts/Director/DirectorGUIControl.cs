@@ -161,17 +161,11 @@ public partial class Director : MonoBehaviour
 						if(directorData.currentMomentID == momentIndex)
 						{
 							//IEnumerator momentTimer = null;
-							StartCoroutine (PlayCurrentMoment ());
+							//StartCoroutine (PlayCurrentMoment ());
+							PlayCurrentMoment ();
 						}
 						selectedMomentButtonID = momentIndex;
-						directorData.currentMomentID = momentIndex;
-						
-						if(directorData.currentMomentID == directorData.nextSceneMomentID && IsNextScene () && sceneTransition == null)
-						{
-							secondaryInfoText.text = "Loading next scene!";
-							sceneTransition = ExecuteSceneTransition(Application.loadedLevel + 1, 1.5f);
-							StartCoroutine (sceneTransition);
-						}
+						//directorData.currentMomentID = momentIndex;
 					};
 					
 					newMomentButton.onClick.AddListener( delegate { momentClickAction(); });
@@ -245,7 +239,8 @@ public partial class Director : MonoBehaviour
 		
 		if(submitPressed)
 		{
-			StartCoroutine (PlayCurrentMoment());
+			//StartCoroutine (PlayCurrentMoment());
+			PlayCurrentMoment();
 			
 			if(directorData.currentMomentID == directorData.nextSceneMomentID - 1 && IsNextScene () && sceneTransition == null)
 			{
@@ -416,11 +411,17 @@ public partial class Director : MonoBehaviour
 		
 		if(!IsNextScene ())
 		{
-			nextSceneButton.gameObject.SetActive (false);
+			if(nextSceneButton.gameObject.activeSelf)
+			{
+				nextSceneButton.gameObject.SetActive (false);
+			}
 		}
 		if(directorData.currentScene <= 1)
 		{
-			prevSceneButton.gameObject.SetActive (false);
+			if(prevSceneButton.gameObject.activeSelf)
+			{
+				prevSceneButton.gameObject.SetActive (false);
+			}
 		}
 	}
 	
@@ -429,36 +430,36 @@ public partial class Director : MonoBehaviour
 		string text = "";
 		switch(directorMode)
 		{
-		case DirectorMode.ACT:
-		{
-			text =
-				"CONTROL MODE: ACT\n\n" +
-					"Current Act: " + currentAct.Number + "\n" +
-					"Number of Scenes:" + currentAct.scenes.Count;
-			break;
-		}
-		case DirectorMode.SCENE:
-		{
-			text =
-				"CONTROL MODE: SCENE\n\n" +
-					"Current Act: " + currentAct.Number + "\n" +
-					"Current Scene: " + currentScene.Number + "\n" +
-					"Number of Moments:" + currentScene.moments.Count;
-			break;
-		}
-		case DirectorMode.MOMENT:
-		{
-			text =
-				"CONTROL MODE: MOMENT\n\n" +
-					"Current Act: " + directorData.currentAct + "\n" +
-					"Current Scene: " + directorData.currentScene + "\n\n" +
-					"Moment Info:\n\n"  +
-					"* Title: " + currentMoment.Title + "\n" +
-					"* Line: " + currentMoment.Line + "\n" +
-					"* Duration: " + currentMoment.Duration + "\n" +
-					"* SFX: " + currentMoment.SFXName + "\n";
-			break;
-		}
+			case DirectorMode.ACT:
+			{
+				text =
+					"CONTROL MODE: ACT\n\n" +
+						"Current Act: " + currentAct.Number + "\n" +
+						"Number of Scenes:" + currentAct.scenes.Count;
+				break;
+			}
+			case DirectorMode.SCENE:
+			{
+				text =
+					"CONTROL MODE: SCENE\n\n" +
+						"Current Act: " + currentAct.Number + "\n" +
+						"Current Scene: " + currentScene.Number + "\n" +
+						"Number of Moments:" + currentScene.moments.Count;
+				break;
+			}
+			case DirectorMode.MOMENT:
+			{
+				text =
+					"CONTROL MODE: MOMENT\n\n" +
+						"Current Act: " + directorData.currentAct + "\n" +
+						"Current Scene: " + directorData.currentScene + "\n\n" +
+						"Moment Info:\n\n"  +
+						"* Title: " + currentMoment.Title + "\n" +
+						"* Line: " + currentMoment.Line + "\n" +
+						"* Duration: " + currentMoment.Duration + "\n" +
+						"* SFX: " + currentMoment.SFXName + "\n";
+				break;
+			}
 		}
 		primaryInfoText.text = text;
 	}
