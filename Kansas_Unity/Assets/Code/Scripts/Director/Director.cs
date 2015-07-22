@@ -49,11 +49,10 @@ public partial class Director : MonoBehaviour
 	private void Update()
 	{
 		HandleButtonTransitions();
+		UpdateButtons ();
 		
 		if(allowInput)
 			HandleInputForGUI ();
-			
-		SyncMomentButtons ();
 	}
 	
 	private void OnApplicationQuit()
@@ -67,7 +66,7 @@ public partial class Director : MonoBehaviour
 	
 #endregion
 
-#region Functions
+#region EditorOnly
 	
 	#if UNITY_EDITOR
 	//So that when you start a scene from the editor it will update the DirectorData to the appropriate values
