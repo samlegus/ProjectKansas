@@ -5,28 +5,28 @@ using System;
 
 public class Moment
 {
-    public string Title { get; set; }
-    public string Line { get; set; }
-    public float Duration { get; set;}
-    public string SFXName {get;set;}
-    public Vector3 Location {get;set;} //not using, just left it there
-    public int Number {get;set;} //trying not to have to use this
+    public string title { get; set; }
+    public string line { get; set; }
+    public float duration { get; set;}
+    public string sfxName {get;set;}
+    public Vector3 location {get;set;} //not using, just left it there
+    public int number {get;set;} //trying not to have to use this
 
     public Moment(string a_title, string a_line, float a_duration, Vector3 a_location, string a_sfxName, int a_number)
     {
-        Title = a_title;
-        Line = a_line;
-        Duration = a_duration;
-        SFXName = a_sfxName;
-        Location = a_location;
-        Number = a_number;
+        title = a_title;
+        line = a_line;
+        duration = a_duration;
+        sfxName = a_sfxName;
+        location = a_location;
+        number = a_number;
     }
 }
 
 public class Scene
 {
     public List<Moment> moments;
-    public int Number { get; set; }
+    public int number { get; set; }
 
     public Scene()
     {
@@ -47,7 +47,7 @@ public class Scene
 public class Act
 {
     public List<Scene> scenes;
-    public int Number { get; set; }
+    public int number { get; set; }
 
     public Act()
     {
@@ -63,7 +63,7 @@ public class Act
     {
         foreach (Scene scene in scenes)
         {
-            if (scene.Number == sceneNum)
+            if (scene.number == sceneNum)
             {
                 return scene;
             }
@@ -91,7 +91,7 @@ public class Script
     {
         foreach (Act act in acts)
         {
-            if (act.Number == actNumber)
+            if (act.number == actNumber)
             {
                 return act;
             }
@@ -135,7 +135,7 @@ public class DataManager
         foreach (XmlElement act in actsNodeList)
         {
             Act newAct = new Act();
-            newAct.Number = Int32.Parse(act.Attributes.GetNamedItem("number").Value);
+            newAct.number = Int32.Parse(act.Attributes.GetNamedItem("number").Value);
             //loop scenes and add to act
             XmlNodeList scenesNodeList = act.SelectNodes("scene");
             
@@ -143,7 +143,7 @@ public class DataManager
             foreach (XmlElement scene in scenesNodeList)
             {
                 Scene newScene = new Scene();
-                newScene.Number = Int32.Parse(scene.Attributes.GetNamedItem("number").Value);
+                newScene.number = Int32.Parse(scene.Attributes.GetNamedItem("number").Value);
                 //loop moments and add to scene
                 XmlNodeList momentsNodeList = scene.SelectNodes("moment");
                 foreach (XmlElement moment in momentsNodeList)

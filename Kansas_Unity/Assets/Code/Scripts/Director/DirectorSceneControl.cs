@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -74,14 +74,14 @@ public partial class Director : MonoBehaviour
 	private void PlayCurrentMoment()
 	{
 		currentMomentSlider.minValue = 0f;
-		currentMomentSlider.maxValue = currentMoment.Duration;
+		currentMomentSlider.maxValue = currentMoment.duration;
 		
 		IEnumerator momentTimer = MomentTimer (0f, currentMomentButton, currentMomentSlider);
 		
 		StartCoroutine(momentTimer);
 	
-		if(!System.String.IsNullOrEmpty (currentMoment.SFXName))
-			specialEffects[currentMoment.SFXName].SetTrigger ("activate");
+		if(!System.String.IsNullOrEmpty (currentMoment.sfxName))
+			specialEffects[currentMoment.sfxName].SetTrigger ("activate");
 	}
 	
 	/*  Diagram for PlayCurrentMoment + MomentTimer

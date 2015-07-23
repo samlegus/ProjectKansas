@@ -28,16 +28,7 @@ public partial class Director : MonoBehaviour
 	
 #region Data Related Functions
 	
-	private void AddButtonTransition(Button button, Vector3 startPos, Vector3 endPos)
-	{
-		for(int i = 0 ; i < buttonTransitions.Count ; ++i)
-		{
-			//New transitions override previous existing ones
-			if(buttonTransitions[i].button == button)
-				buttonTransitions.Remove (buttonTransitions[i]);
-		}
-		buttonTransitions.Add (new ButtonTransition(button, startPos, endPos));
-	}
+	
 	
 	private void SetScene(int sceneNumber)
 	{
@@ -84,7 +75,7 @@ public partial class Director : MonoBehaviour
 	/// <returns></returns>
 	private bool IsNextScene()
 	{
-		if (dataManager.GetAct(directorData.currentAct).scenes[dataManager.GetAct(directorData.currentAct).scenes.Count - 1].Number == directorData.currentScene)
+		if (dataManager.GetAct(directorData.currentAct).scenes[dataManager.GetAct(directorData.currentAct).scenes.Count - 1].number == directorData.currentScene)
 		{
 			return false;
 		}
@@ -97,7 +88,7 @@ public partial class Director : MonoBehaviour
 	/// <returns></returns>
 	private bool IsNextAct()
 	{
-		if (dataManager.Acts[dataManager.Acts.Count - 1].Number == directorData.currentAct)
+		if (dataManager.Acts[dataManager.Acts.Count - 1].number == directorData.currentAct)
 		{
 			return false;
 		}

@@ -1,4 +1,4 @@
-﻿
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -67,7 +67,7 @@ public partial class Director : MonoBehaviour
 		if(allowInput)
 		{
 			SetAct(GetNumberFromButton(clickedButton));
-			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + 1, .25f));
+			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.number + "Scene" + 1, .25f));
 		}
 	}
 	
@@ -76,7 +76,7 @@ public partial class Director : MonoBehaviour
 		if(allowInput)
 		{
 			SetScene(GetNumberFromButton(clickedButton));
-			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.Number + "Scene" + currentScene.Number, sceneTransitionDelay));
+			StartCoroutine (ExecuteSceneTransition("Act" + currentAct.number + "Scene" + currentScene.number, sceneTransitionDelay));
 		}
 	}
 	

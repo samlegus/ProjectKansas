@@ -78,27 +78,26 @@ public partial class Director : MonoBehaviour
 			levelLoadedFromEditor = true;
 		}
 	}
-	#endif
-	
 	
 	private void SetDirectorDataForThisScene()
 	{
 		string sceneName = Application.loadedLevelName;
 		char[] numbersOnly = new System.String(sceneName.Where(Char.IsDigit).ToArray()).ToCharArray ();
 		
-		foreach(char c in numbersOnly)
-			print (c);
+		//foreach(char c in numbersOnly)
+			//print (c);
 		
 		int act = numbersOnly[0];
 		int scene = numbersOnly[1];
 		int.TryParse(numbersOnly[0].ToString(), out act);
 		int.TryParse(numbersOnly[1].ToString(), out scene);
 		
-		print ("Current Act/Scene : " + act + " / " + scene);
+		//print ("Current Act/Scene : " + act + " / " + scene);
 		
 		directorData.currentAct = act;
 		directorData.currentScene = scene;
 	}
+	#endif
 	
 	
 	#endregion

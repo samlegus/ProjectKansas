@@ -105,7 +105,7 @@ public partial class Director : MonoBehaviour
 			Button newActButton = Instantiate<Button>(buttonPrefab);
 			actButtons.Add(newActButton);
 			newActButton.transform.position = momentPositions[(int)MomentPosition.ABOVE].transform.position;
-			newActButton.GetComponentInChildren<Text>().text = act.Number.ToString();
+			newActButton.GetComponentInChildren<Text>().text = act.number.ToString();
 			newActButton.transform.SetParent(buttonPanel);
 			newActButton.onClick.AddListener( delegate { HandleActButtonClick(newActButton); });
 			
@@ -113,18 +113,18 @@ public partial class Director : MonoBehaviour
 			actHover.text = primaryInfoText;
 			actHover.textOnHover = 
 				"Act Info:\n\n"  +
-				"Number: " + act.Number + "\n" +
+				"Number: " + act.number + "\n" +
 				"Number of Scenes:" + act.scenes.Count;
 			
 			newActButton.name = "ActButton";
-			if(act.Number == directorData.currentAct)
+			if(act.number == directorData.currentAct)
 				newActButton.image.color = Color.yellow;
 			
-			foreach (Scene scene in dataManager.GetAct(act.Number).scenes)
+			foreach (Scene scene in dataManager.GetAct(act.number).scenes)
 			{
 				Button newSceneButton = Instantiate<Button>(buttonPrefab);
 				newSceneButton.transform.position = momentPositions[(int)MomentPosition.BELOW].transform.position;
-				newSceneButton.GetComponentInChildren<Text>().text = scene.Number.ToString();
+				newSceneButton.GetComponentInChildren<Text>().text = scene.number.ToString();
 				newSceneButton.transform.SetParent(buttonPanel);
 				newSceneButton.onClick.AddListener(delegate { HandleSceneButtonClick(newSceneButton); });
 				
@@ -132,21 +132,21 @@ public partial class Director : MonoBehaviour
 				sceneHover.text = primaryInfoText;
 				sceneHover.textOnHover = 
 					"Scene Info:\n\n"  +
-					"Scene Number: " + scene.Number + "\n" +
+						"Scene Number: " + scene.number + "\n" +
 					"Number of Moments:" + scene.moments.Count;
 				
-				newSceneButton.name = "SceneButton Act" + act.Number + "Scene" + scene.Number;
-				if(scene.Number == currentScene.Number)
+				newSceneButton.name = "SceneButton Act" + act.number + "Scene" + scene.number;
+				if(scene.number == currentScene.number)
 					newSceneButton.image.color = Color.yellow;
 				sceneButtons.Add(newSceneButton);
 				
 				int momentCounter = -1;
-				foreach (Moment moment in dataManager.GetAct(act.Number).GetScene(scene.Number).moments)
+				foreach (Moment moment in dataManager.GetAct(act.number).GetScene(scene.number).moments)
 				{
 					momentCounter++;
-					int momentIndex = dataManager.GetCombinedIndex(act.Number, scene.Number, 0) + momentCounter;
+					int momentIndex = dataManager.GetCombinedIndex(act.number, scene.number, 0) + momentCounter;
 					Button newMomentButton = Instantiate<Button>(buttonPrefab);
-					newMomentButton.GetComponentInChildren<Text>().text = moment.Title;
+					newMomentButton.GetComponentInChildren<Text>().text = moment.title;
 					newMomentButton.transform.SetParent(buttonPanel);
 					
 					Slider slider = Instantiate<Slider>(momentSliderPrefab);
@@ -173,7 +173,7 @@ public partial class Director : MonoBehaviour
 					//slider.gameObject.SetActive (false);
 					
 					slider.minValue = 0f;
-					slider.maxValue = moment.Duration;
+					slider.maxValue = moment.duration;
 					
 //					ButtonHover momentHover = newMomentButton.gameObject.AddComponent<ButtonHover>();
 //					momentHover.text = primaryInfoText;
@@ -184,7 +184,7 @@ public partial class Director : MonoBehaviour
 //						"* Duration: " + moment.Duration + "\n" +
 //						"* SFX: " + moment.SFXName + "\n";
 					
-					newMomentButton.name = "MomentButton (" + moment.Title + ")";
+					newMomentButton.name = "MomentButton (" + moment.title + ")";
 					if(!currentScene.ContainsMoment(moment))
 						newMomentButton.interactable = false;
 					else
@@ -196,6 +196,17 @@ public partial class Director : MonoBehaviour
 				}
 			}
 		}
+	}
+	
+	private void AddButtonTransition(Button button, Vector3 startPos, Vector3 endPos)
+	{
+		for(int i = 0 ; i < buttonTransitions.Count ; ++i)
+		{
+			//New transitions override previous existing ones
+			if(buttonTransitions[i].button == button)
+				buttonTransitions.Remove (buttonTransitions[i]);
+		}
+		buttonTransitions.Add (new ButtonTransition(button, startPos, endPos));
 	}
 	
 	private void HandleButtonTransitions()
@@ -430,7 +441,7 @@ public partial class Director : MonoBehaviour
 			{
 				text =
 					"CONTROL MODE: ACT\n\n" +
-						"Current Act: " + currentAct.Number + "\n" +
+						"Current Act: " + currentAct.number + "\n" +
 						"Number of Scenes:" + currentAct.scenes.Count;
 				break;
 			}
@@ -438,8 +449,8 @@ public partial class Director : MonoBehaviour
 			{
 				text =
 					"CONTROL MODE: SCENE\n\n" +
-						"Current Act: " + currentAct.Number + "\n" +
-						"Current Scene: " + currentScene.Number + "\n" +
+						"Current Act: " + currentAct.number + "\n" +
+					"Current Scene: " + currentScene.number + "\n" +
 						"Number of Moments:" + currentScene.moments.Count;
 				break;
 			}
@@ -450,10 +461,10 @@ public partial class Director : MonoBehaviour
 						"Current Act: " + directorData.currentAct + "\n" +
 						"Current Scene: " + directorData.currentScene + "\n\n" +
 						"Moment Info:\n\n"  +
-						"* Title: " + currentMoment.Title + "\n" +
-						"* Line: " + currentMoment.Line + "\n" +
-						"* Duration: " + currentMoment.Duration + "\n" +
-						"* SFX: " + currentMoment.SFXName + "\n";
+						"* Title: " + currentMoment.title + "\n" +
+						"* Line: " + currentMoment.line + "\n" +
+						"* Duration: " + currentMoment.duration + "\n" +
+						"* SFX: " + currentMoment.sfxName + "\n";
 				break;
 			}
 		}
