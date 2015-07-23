@@ -107,7 +107,7 @@ public partial class Director : MonoBehaviour
 			newActButton.transform.position = momentPositions[(int)MomentPosition.ABOVE].transform.position;
 			newActButton.GetComponentInChildren<Text>().text = act.Number.ToString();
 			newActButton.transform.SetParent(buttonPanel);
-			newActButton.onClick.AddListener(delegate { HandleActButtonClick(newActButton); });
+			newActButton.onClick.AddListener( delegate { HandleActButtonClick(newActButton); });
 			
 			ButtonHover actHover = newActButton.gameObject.AddComponent<ButtonHover>();
 			actHover.text = primaryInfoText;
@@ -216,36 +216,33 @@ public partial class Director : MonoBehaviour
 	
 	private void HandleInputForGUI()
 	{
-		float vAxis = Input.GetAxisRaw ("Vertical");		//-1 , 0, or 1 depending on Input (Neg, None, or Pos)
-		bool vPressed = Input.GetButtonDown ("Vertical");	//True if button was pressed, false on release, hold, or no input
-		bool submitPressed = Input.GetButtonDown ("Submit");
-		
-		float mouseWheelAxis = Input.GetAxisRaw ("Mouse ScrollWheel");
-		
-		if(directorMode == DirectorMode.MOMENT)
+		if(allowInput)
 		{
-			if((vPressed && vAxis < 0) || mouseWheelAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1 )
+			float vAxis = Input.GetAxisRaw ("Vertical");		//-1 , 0, or 1 depending on Input (Neg, None, or Pos)
+			bool vPressed = Input.GetButtonDown ("Vertical");	//True if button was pressed, false on release, hold, or no input
+			bool submitPressed = Input.GetButtonDown ("Submit");
+			
+			float mouseWheelAxis = Input.GetAxisRaw ("Mouse ScrollWheel");
+			
+			if(directorMode == DirectorMode.MOMENT)
 			{
-				UpdatePrimaryInfo();
-				selectedMomentButtonID = directorData.currentMomentID + 1;
+				if((vPressed && vAxis < 0) || mouseWheelAxis < 0 && directorData.currentMomentID < momentButtons.Count && directorData.currentMomentID < directorData.nextSceneMomentID - 1 )
+				{
+					UpdatePrimaryInfo();
+					selectedMomentButtonID = directorData.currentMomentID + 1;
+				}
+				
+				if((vPressed && vAxis > 0) || mouseWheelAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID > dataManager.GetCombinedIndex(directorData.currentAct, directorData.currentScene, 0))
+				{
+					UpdatePrimaryInfo();
+					selectedMomentButtonID = directorData.currentMomentID - 1;
+				}	
 			}
 			
-			if((vPressed && vAxis > 0) || mouseWheelAxis > 0 && directorData.currentMomentID > 0 && directorData.currentMomentID > dataManager.GetCombinedIndex(directorData.currentAct, directorData.currentScene, 0))
+			if(submitPressed)
 			{
-				UpdatePrimaryInfo();
-				selectedMomentButtonID = directorData.currentMomentID - 1;
-			}	
-		}
-		
-		if(submitPressed)
-		{
-			//StartCoroutine (PlayCurrentMoment());
-			PlayCurrentMoment();
-			
-			if(directorData.currentMomentID == directorData.nextSceneMomentID - 1 && IsNextScene () && sceneTransition == null)
-			{
-				sceneTransition = ExecuteSceneTransition(Application.loadedLevel + 1, 1.5f);
-				StartCoroutine (sceneTransition);
+				//StartCoroutine (PlayCurrentMoment());
+				PlayCurrentMoment();
 			}
 		}
 	}
@@ -390,7 +387,6 @@ public partial class Director : MonoBehaviour
 		{
 			if(selectedMomentButtonID > directorData.currentMomentID)
 			{
-				print (selectedMomentButtonID);
 				for(int i = 0 ; i < selectedMomentButtonID - directorData.currentMomentID; ++i)
 				{
 					ShiftButtonsUp ();

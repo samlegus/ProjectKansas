@@ -80,16 +80,18 @@ public partial class Director : MonoBehaviour
 		}
 	}
 	
+	//Button that calls this is disabled if there is no next scene
 	public void HandleNextSceneButtonClick()
 	{
-		sceneTransition = ExecuteSceneTransition(nextSceneIndex, sceneTransitionDelay);
-		StartCoroutine(sceneTransition);
+		SetScene (directorData.currentScene++);
+		StartCoroutine(ExecuteSceneTransition(nextSceneIndex, sceneTransitionDelay));
 	}
 	
+	//Button that calls this is disabled if there is no prev scene
 	public void HandlePrevSceneButtonClick()
 	{
-		sceneTransition = ExecuteSceneTransition(prevSceneIndex, sceneTransitionDelay);
-		StartCoroutine(sceneTransition);
+		SetScene (directorData.currentScene--);
+		StartCoroutine(ExecuteSceneTransition(nextSceneIndex, sceneTransitionDelay));
 	}
 	
 	#endregion

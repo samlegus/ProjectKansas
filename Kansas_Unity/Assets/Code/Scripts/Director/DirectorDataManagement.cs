@@ -8,14 +8,9 @@ using System.Collections.Generic;
 public partial class Director : MonoBehaviour
 {
 
-#region Inspector
-	
-	public static DirectorData directorData;	//ScriptableObject to allow us to persist information about the UI between scenes
-	
-#endregion
-	
 #region Private Variables
 	
+	private static DirectorData directorData;	//ScriptableObject to allow us to persist information about the UI between scenes
 	private static DataManager dataManager;// = new DataManager();//this loads xml data and objectify's it so can access data
 	
 #endregion

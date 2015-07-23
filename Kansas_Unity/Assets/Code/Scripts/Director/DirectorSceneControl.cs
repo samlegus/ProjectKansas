@@ -11,7 +11,7 @@ public partial class Director : MonoBehaviour
 #region Private Variables
 	
 	//private IEnumerator currentMomentTimer;
-	private IEnumerator sceneTransition;
+	//private IEnumerator sceneTransition;
 	public float sceneTransitionDelay = 1.0f;
 	
 #endregion
@@ -43,7 +43,7 @@ public partial class Director : MonoBehaviour
 		{
 			secondaryInfoText.text = "Transitioning to scene in " + newDelay.ToString () + "seconds.";
 			delayDuration = newDelay;
-			sceneTransition = ExecuteSceneTransition(sceneName, delayDuration);
+			IEnumerator sceneTransition = ExecuteSceneTransition(sceneName, delayDuration);
 			StartCoroutine(sceneTransition);
 		}	
 	}
@@ -65,12 +65,12 @@ public partial class Director : MonoBehaviour
 		{
 			secondaryInfoText.text = "Transitioning to scene in " + newDelay.ToString () + "seconds.";
 			delayDuration = newDelay;
-			sceneTransition = ExecuteSceneTransition(sceneIndex, delayDuration);
+			IEnumerator sceneTransition = ExecuteSceneTransition(sceneIndex, delayDuration);
 			StartCoroutine(sceneTransition);
 		}	
 	}
 	
-	//This is kind of a wierd recursive combo, sorry if it's confusing.
+	//See Diagram
 	private void PlayCurrentMoment()
 	{
 		currentMomentSlider.minValue = 0f;
