@@ -1,6 +1,6 @@
-<script>
+<script filmLength = "01:30:00">
   <act number="1">
-    <scene number="1">
+    <scene number="1" time="00:00:00">
       <moment title="Earth Apocalypse" line="The earth ended" duration = "5.5" location = "1.0, 5.0, 0.0" sfx = "Fire" />
       <moment title="Meme" line="The apocalypse started" duration = "3.75" sfx = "Ice" />
       <moment title="Humanity dissolves" line="After the end" />
@@ -21,7 +21,7 @@
       <moment title="Transported to OZ" line="" />
       <moment title="Sleep Dart" line="Da'fuck?" />
     </scene>
-    <scene number="2">
+    <scene number="2" time ="00:15:00">
       <moment title="Glenada's PSA" line="" sfx ="Pixie Dust" />
       <moment title="Glenada's Lair" line="VO repeats" sfx = "Solar Flare" />
       <moment title="Crystal ball Elfesto" line="Here is Elfesto" />
@@ -32,7 +32,7 @@
       <moment title="Intro TOTO" line="" />
       <moment title="Transport to Tunnels" line="" />
     </scene>
-    <scene number="3">
+    <scene number="3" time = "00:30:00">
       <moment title="The Tunnels" line="" />
       <moment title="Glenada Departs" line="Ta Ta!" />
       <moment title="TOTO interaction" line="Kay, so, what are we talking here..." />
@@ -43,7 +43,7 @@
       <moment title="Strong Man engage!" line="They mught have done a number on you" />
       <moment title="Follow" line="Follow" />
     </scene>
-    <scene number="4">
+    <scene number="4" time = "00:45:00">
       <moment title="TOTO Scans the Junkyard" line="" />
       <moment title="Tin Ronin Fight" line="" />
       <moment title="Title Shot" line="Codename: Kansas, Witch Hunter!" />
@@ -52,7 +52,7 @@
       <moment title="TR joins the Team" line="Right, ass-kickin is the game" />
       <moment title="SM Inserts RAM" line="Intersing RAM" />
     </scene>
-    <scene number="5">
+    <scene number="5" time = "00:00:00">
       <moment title="Leo's Lab" line="Shit! No you don't..." />
       <moment title="Through the forest" line="These woods are well knows for being cursed" />
       <moment title="Sly pounces" line="Meow!" />
@@ -61,7 +61,7 @@
       <moment title="Sly pounces FTW" line="Meow!" />
       <moment title="Leo lets them in" line="I'm in this now!" />
     </scene>
-    <scene number="6">
+    <scene number="6" time = "00:00:00">
       <moment title="Leo's Lab" line="So you're all going to die" />
       <moment title="Explains the map" line="She's got traps here, merms in the water" />
       <moment title="Discuss the plan" line="" />
@@ -71,7 +71,7 @@
     </scene>
   </act>
   <act number="2">
-    <scene number="1">
+    <scene number="1" time = "00:00:00">
       <moment title="FLASHBACK Master and OZ" line="X" />
       <moment title="Wake up at Elfesto's" line="Wake up maggot!!" />
       <moment title="Team Kansas Attack!" line="Strong Man, now!!!!" />
@@ -83,7 +83,7 @@
       <moment title="OZ gets a visual display" line="I am the AI imprint of the original OZ" />
       <moment title="Leo interjects" line="This is bullshit!" />
     </scene>
-    <scene number="2">
+    <scene number="2" time = "00:00:00">
       <moment title="Intimate Kansas and Tin Ronin" line="Hey rusty, how you holding up?" />
       <moment title="Elfesto and OZ debate" line="You know she's never going to let me..." />
       <moment title="Kansas and Ronin get close" line="Look, you're hanging with me now" />
@@ -92,13 +92,13 @@
       <moment title="Sex Scene" line="Shhh. That's what she said" />
       <moment title="Out of sex scene" line="Guess you're not in Kansas any more" />
     </scene>
-    <scene number="3">
+    <scene number="3" time = "00:00:00">
       <moment title="Armor Up and Plan Scene" line="Okay boys and girls" />
       <moment title="Armor Up Montage" line="X" />
       <moment title="Planning Dialogue, Leo joins" line="We will need to shut down her " />
       <moment title="Tin Ronin discharges" line="Let's do this shit, with guns! YAY!" />
     </scene>
-    <scene number="4">
+    <scene number="4" time = "00:00:00">
       <moment title="Elfesto with OZ" line="It's quiet, too quiet" />
       <moment title="Leo hacks, East enters" line="Listen, I just got my nails done" />
       <moment title="Ronin &amp; East FIGHT!" line="Man your station. Oh Gods...." />
@@ -125,7 +125,7 @@
       <moment title="Plug it back in" line="That's it! It's working!" />
       <moment title="Achievement Unlocked!" line="He's talking about this...." />
     </scene>
-    <scene number="6">
+    <scene number="6" time = "00:00:00">
       <moment title="It's all over, everone's safe" line="Hey, anybody have a clue as to what" />
       <moment title="No such thing as a good witch" line="There's no such thing as a good Witch." />
       <moment title="See ya later buddies" line="X" />

@@ -27,10 +27,15 @@ public class Scene
 {
     public List<Moment> moments;
     public int number { get; set; }
+	public TimeSpan startTime {get;set;}
+	public TimeSpan totalTime {get;set;}
+	public TimeSpan endTime { get {return startTime + totalTime;}}
 
     public Scene()
     {
         moments = new List<Moment>();
+        startTime = TimeSpan.Zero;
+        totalTime = TimeSpan.Zero;
     }
 
     public Scene(List<Moment> momentList)
@@ -76,6 +81,8 @@ public class Act
 public class Script
 {
     public List<Act> acts;
+    public TimeSpan totalSpan {get;set;}
+    public float totalSeconds { get {return (float)totalSpan.TotalSeconds;}}
 
     public Script()
     {
@@ -104,7 +111,6 @@ public class Script
 //public class DataManager : MonoBehaviour
 public class DataManager
 {
-
     public List<Act> Acts
     {
         get
@@ -120,6 +126,8 @@ public class DataManager
 
     private XmlDocument mDataDoc = new XmlDocument();
     private Script m_Script = new Script();
+    
+    public Script script { get{ return m_Script;}}
 
 
     public DataManager()
@@ -130,20 +138,32 @@ public class DataManager
             Debug.Log("Data file did not load.");
         }
 
+		XmlNode scriptNode = mDataDoc.SelectSingleNode("script");
+		
+		TimeSpan totalFilmSpan = TimeSpan.Parse (scriptNode.Attributes.GetNamedItem("filmLength").Value);
+		m_Script.totalSpan = totalFilmSpan;
+		//TimeSpan prevSceneSpan = TimeSpan.Zero;
+		Scene prevScene = new Scene();
         //loop acts and add to script
         XmlNodeList actsNodeList = mDataDoc.SelectNodes("script/act");
         foreach (XmlElement act in actsNodeList)
         {
             Act newAct = new Act();
             newAct.number = Int32.Parse(act.Attributes.GetNamedItem("number").Value);
+          
             //loop scenes and add to act
             XmlNodeList scenesNodeList = act.SelectNodes("scene");
             
             int momentCounter = 0;
+            
             foreach (XmlElement scene in scenesNodeList)
             {
                 Scene newScene = new Scene();
                 newScene.number = Int32.Parse(scene.Attributes.GetNamedItem("number").Value);
+				newScene.startTime = TimeSpan.Parse(scene.Attributes.GetNamedItem("time").Value);
+         		//newScene.totalTime = newScene.startTime - prevSceneSpan;
+         		prevScene.totalTime = newScene.startTime - prevScene.startTime;
+         		//prevSceneSpan = newScene.startTime;
                 //loop moments and add to scene
                 XmlNodeList momentsNodeList = scene.SelectNodes("moment");
                 foreach (XmlElement moment in momentsNodeList)
@@ -170,7 +190,6 @@ public class DataManager
 						location = Vector3Helper.StringToVector3(locationAsString);
 					}
 						
-							
 					if(moment.HasAttribute ("sfx"))
 					   sfxName = moment.Attributes.GetNamedItem ("sfx").Value;
 					   
@@ -178,13 +197,12 @@ public class DataManager
                     newScene.moments.Add(newMoment);
                 }
                 newAct.scenes.Add(newScene);
+                prevScene = newScene;
             }
             m_Script.acts.Add(newAct);
         }
-
-
     }
-
+   
     /// <summary>
     /// Use this to get the index of a combined list of all moments from act, scene format.
     /// </summary>

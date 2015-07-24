@@ -22,6 +22,10 @@ public partial class Director : MonoBehaviour
 	public int prevSceneIndex { get { return Application.loadedLevel - 1;}}
 
 #endregion
+
+#region Methods
+
+#endregion
 	
 #region Coroutines
 	
@@ -37,6 +41,7 @@ public partial class Director : MonoBehaviour
 		if(delayDuration <= 0)
 		{
 			secondaryInfoText.text = "Transitioning to scene NOW...";
+			
 			Application.LoadLevel (sceneName);
 		}		
 		else

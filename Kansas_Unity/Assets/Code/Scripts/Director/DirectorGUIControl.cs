@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,21 +11,35 @@ public partial class Director : MonoBehaviour
   	
 #region Inspector
 	
+	#region Scene
 	public float buttonTransitionSpeed = 3f;
-	public Button buttonPrefab;//prefab will be cloning as child of btnPanel
+	
 	public RectTransform buttonPanel;//parent to the buttons
 	public Text actText;
 	public Text sceneText;
 	public Text secondaryInfoText;
 	public Text primaryInfoText;
-	public Slider momentSliderPrefab; 
-	
+
 	public RectTransform[] momentPositions;
 	public RectTransform[] sceneButtonsPosition;
-	//public RectTransform actButtonAbovePosition;
-	
 	public Button nextSceneButton;
 	public Button prevSceneButton;
+	public Slider sceneSlider;
+	public Slider timeSlider;
+	public Text timeTextA;
+	public Text timeTextB;
+	//public RectTransform actButtonAbovePosition;
+	
+	#endregion
+	
+	public Slider momentSliderPrefab; 
+	public Button buttonPrefab;//prefab will be cloning as child of btnPanel
+	
+	#region Prefab
+	
+	#endregion
+	
+	
 	
 #endregion
 	
@@ -133,7 +148,8 @@ public partial class Director : MonoBehaviour
 				sceneHover.textOnHover = 
 					"Scene Info:\n\n"  +
 						"Scene Number: " + scene.number + "\n" +
-					"Number of Moments:" + scene.moments.Count;
+						"Number of Moments:" + scene.moments.Count +
+						"Starts at:" + scene.endTime.ToString ();
 				
 				newSceneButton.name = "SceneButton Act" + act.number + "Scene" + scene.number;
 				if(scene.number == currentScene.number)
@@ -471,42 +487,34 @@ public partial class Director : MonoBehaviour
 		primaryInfoText.text = text;
 	}
 	
-	//    public void UpdatePrimaryInfoFor(Act act)
-	//    {
-	//    	string text = "";
-	//		text =
-	//			//"INFO MODE: ACT\n\n" +
-	//			"Act Info:\n\n"  +
-	//			"Number: " + act.Number + "\n" +
-	//			"Number of Scenes:" + act.scenes.Count;
-	//		primaryInfoText.text = text;
-	//    }
-	//    
-	//	private void UpdatePrimaryInfoFor(Scene scene)
-	//	{
-	//		string text = "";
-	//		text =
-	//			//"Current Act: " + currentAct.Number + "\n" +
-	//			"Scene Info:\n\n"  +
-	//			"Scene Number: " + scene.Number + "\n" +
-	//			"Number of Moments:" + scene.moments.Count;
-	//		primaryInfoText.text = text;
-	//	}
-	//	
-	//	private void UpdatePrimaryInfoFor(Moment moment)
-	//	{
-	//		string text = "";
-	//		text =
-	//			//"CONTROL MODE: MOMENT\n\n" +
-	//				//"Current Act: " + directorData.currentAct + "\n" +
-	//				//"Current Scene: " + directorData.currentScene + "\n\n" +
-	//				"Moment Info:\n\n"  +
-	//				"* Title: " + moment.Title + "\n" +
-	//				"* Line: " + moment.Line + "\n" +
-	//				"* Duration: " + moment.Duration + "\n" +
-	//				"* SFX: " + moment.SFXName + "\n";
-	//		primaryInfoText.text = text;
-	//	}
+	private void UpdateTimeElements()
+	{
+		switch(directorMode)
+		{
+			case DirectorMode.SCENE:
+			{
+				timeSlider.minValue = 0;
+				timeSlider.maxValue = directorData.totalDuration;
+				timeSlider.value = directorData.totalSceneTime;
+				timeSlider.handleRect.GetComponentInChildren<Text>().text = new TimeSpan(0,0,(int)directorData.totalSceneTime).ToString ();
+				
+				timeTextA.text = TimeSpan.Zero.ToString();
+				timeTextB.text = dataManager.script.totalSpan.ToString ();
+				break;
+			}
+			case DirectorMode.MOMENT:
+			{
+				timeSlider.minValue = (float)currentScene.startTime.TotalSeconds;
+				timeSlider.maxValue = (float)currentScene.endTime.TotalSeconds;
+				timeSlider.value = directorData.elapsedSceneTime;
+				timeSlider.handleRect.GetComponentInChildren<Text>().text = new TimeSpan(0,0,(int)directorData.elapsedSceneTime).ToString ();
+				
+				timeTextA.text = currentScene.startTime.ToString ();
+				timeTextB.text = currentScene.endTime.ToString ();
+				break;
+			}
+		}
+	}
 	
 #endregion
 	

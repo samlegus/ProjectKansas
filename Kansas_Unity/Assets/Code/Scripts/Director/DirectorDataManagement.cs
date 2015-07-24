@@ -13,6 +13,8 @@ public partial class Director : MonoBehaviour
 	private static DirectorData directorData;	//ScriptableObject to allow us to persist information about the UI between scenes
 	private static DataManager dataManager;// = new DataManager();//this loads xml data and objectify's it so can access data
 	
+	private bool updateSceneTimer = true;
+	
 #endregion
 	
 #region Properties
@@ -21,14 +23,24 @@ public partial class Director : MonoBehaviour
 	private Scene currentScene { get { return currentAct.scenes[directorData.currentScene - 1]; }}
 	private Moment currentMoment { get { return currentScene.moments[dataManager.GetRelativeIndex (directorData.currentAct, directorData.currentScene, directorData.currentMomentID)]; }}
 	
+	
+	//Used to shift buttons exclusively more or less
 	private int selectedMomentButtonID { get ;set;}
 	//int selectedSceneID {get;set;}
 	
 #endregion
 	
 #region Data Related Functions
+
+	private void OnSceneStart()
+	{
 	
+	}
 	
+	private void OnSceneTransition()
+	{
+	
+	}
 	
 	private void SetScene(int sceneNumber)
 	{
@@ -154,6 +166,7 @@ public partial class Director : MonoBehaviour
 		}
 		return number;
 	}
+	
 	
 	
 #endregion
